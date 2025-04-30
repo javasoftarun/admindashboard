@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/login/login";
 import Index from "./components/pages/index";
 import ShowUsers from "./components/pages/ShowUsers";
