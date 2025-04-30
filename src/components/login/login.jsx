@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -127,9 +127,9 @@ const Login = () => {
               )}
             </div>
             <div className="text-end mb-3">
-              <a href="/forgot-password" className="text-primary">
-                Forgot Password?
-              </a>
+            <Link to="/forgot-password" className="text-primary">
+              Forgot Password?
+            </Link>
             </div>
             <button
               type="submit"
@@ -150,7 +150,7 @@ const Login = () => {
         </div>
         <div className="card-footer text-center">
           <small>
-            Don't have an account? <a href="/register-admin">Register</a>
+            Don't have an account? <Link to="/register-admin">Register</Link>
           </small>
         </div>
       </div>
