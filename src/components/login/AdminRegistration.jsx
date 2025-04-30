@@ -117,6 +117,7 @@ const AdminRegistration = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your name"
+                  maxLength={50} // Limit to 50 characters
                 />
                 {errors.name && <div className="invalid-feedback">{errors.name}</div>}
               </div>
@@ -132,6 +133,7 @@ const AdminRegistration = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
+                  maxLength={50}
                 />
                 {errors.email && <div className="invalid-feedback">{errors.email}</div>}
               </div>
@@ -164,6 +166,7 @@ const AdminRegistration = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
+                  maxLength={10} // Limit to 15 characters (adjust as needed)
                 />
                 {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
               </div>
