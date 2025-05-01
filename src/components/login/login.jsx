@@ -17,40 +17,39 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-  
-    // Validate form data
+
     if (!formData.username.trim() || !formData.password.trim()) {
       setErrors({ general: "Username and password are required." });
       setLoading(false);
       return;
     }
-  
-    // SHA-1 encode the password
+
     const hashedPassword = CryptoJS.SHA1(formData.password).toString();
-  
-    // Prepare the request payload
+
     const requestData = {
       username: formData.username,
-      password: hashedPassword, // Send the hashed password
+      password: hashedPassword,
     };
-  
+
     try {
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-  
+      const response = await fetch(
+        "https://userservice-a0nr.onrender.com/api/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
+
       if (response.ok) {
         const responseData = await response.json();
-  
+
         if (responseData.responseMessage === "success") {
-          const userData = responseData.responseData[0]; // Extract user data from the array
+          const userData = responseData.responseData[0];
           const { token, userId, name, email, phone, role, imageUrl } = userData;
-  
-          // Save the token and user details in localStorage
+
           localStorage.setItem("authToken", token);
           localStorage.setItem("userId", userId);
           localStorage.setItem("name", name);
@@ -58,8 +57,7 @@ const Login = () => {
           localStorage.setItem("phone", phone);
           localStorage.setItem("role", role);
           localStorage.setItem("imageUrl", imageUrl);
-  
-          // Redirect to the dashboard or index page
+
           navigate("/index");
         } else {
           setErrors({ general: responseData.responseMessage || "Login failed." });
@@ -78,14 +76,43 @@ const Login = () => {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center bg-dark text-white"
-      style={{ height: "100vh" }}
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        height: "100vh",
+        backgroundColor: "#f8f9fa", // Light background
+      }}
     >
-      <div className="card shadow-lg" style={{ width: "400px" }}>
-        <div className="card-header bg-primary text-white text-center">
-          <h4>Login</h4>
+      <div
+        className="card shadow-lg border-0"
+        style={{
+          width: "400px",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        {/* Logo Section */}
+        <div
+          className="text-center"
+          style={{
+            backgroundColor: "#333333", // Dark background for contrast
+            padding: "30px 20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Subtle shadow
+          }}
+        >
+          <img
+            src={require("../../assets/logo.png")} // Adjust the path based on your project structure
+            alt="YatraNow Logo"
+            style={{
+              height: "50px", // Increased size for better visibility
+              marginBottom: "10px",
+            }}
+          />
+          
         </div>
+
+        {/* Login Form */}
         <div className="card-body">
+          <h4 className="text-center mb-4 text-dark">Login</h4>
           {errors.general && (
             <div className="alert alert-danger" role="alert">
               {errors.general}
@@ -93,12 +120,14 @@ const Login = () => {
           )}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="username" className="form-label">
+              <label htmlFor="username" className="form-label text-dark">
                 Username
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                className={`form-control ${
+                  errors.username ? "is-invalid" : ""
+                }`}
                 id="username"
                 name="username"
                 value={formData.username}
@@ -110,12 +139,14 @@ const Login = () => {
               )}
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">
+              <label htmlFor="password" className="form-label text-dark">
                 Password
               </label>
               <input
                 type="password"
-                className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                className={`form-control ${
+                  errors.password ? "is-invalid" : ""
+                }`}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -127,13 +158,13 @@ const Login = () => {
               )}
             </div>
             <div className="text-end mb-3">
-            <Link to="/forgot-password" className="text-primary">
-              Forgot Password?
-            </Link>
+              <Link to="/forgot-password" className="text-primary">
+                Forgot Password?
+              </Link>
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-100"
+              className="btn btn-warning w-100 text-dark fw-bold"
               disabled={loading}
             >
               {loading ? (
@@ -148,9 +179,20 @@ const Login = () => {
             </button>
           </form>
         </div>
-        <div className="card-footer text-center">
-          <small>
-            Don't have an account? <Link to="/register-admin">Register</Link>
+
+        {/* Footer */}
+        <div
+          className="card-footer text-center"
+          style={{
+            backgroundColor: "white", // Yellow background
+            padding: "15px",
+          }}
+        >
+          <small className="text-dark">
+            Don't have an account?{" "}
+            <Link to="/register-admin" className="text-dark fw-bold">
+              Register
+            </Link>
           </small>
         </div>
       </div>

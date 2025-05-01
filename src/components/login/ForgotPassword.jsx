@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js"; // Import crypto-js for password encryption
 
 const ForgotPassword = () => {
@@ -51,7 +52,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-  
+
     // Check if newPassword and confirmPassword match
     if (newPassword !== confirmPassword) {
       setMessage("Passwords do not match.");
@@ -61,7 +62,7 @@ const ForgotPassword = () => {
 
     // Encrypt the new password using SHA-1
     const encryptedPassword = CryptoJS.SHA1(newPassword).toString();
-  
+
     try {
       const response = await fetch("https://userservice-a0nr.onrender.com/api/users/reset-password", {
         method: "POST",
@@ -70,7 +71,7 @@ const ForgotPassword = () => {
         },
         body: JSON.stringify({ username: email, otp, newPassword: encryptedPassword }), // Include username in the request body
       });
-  
+
       if (response.ok) {
         setMessage("Password updated successfully.");
         setTimeout(() => navigate("/login"), 2000); // Redirect to login after success
@@ -88,14 +89,44 @@ const ForgotPassword = () => {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center bg-dark text-white"
-      style={{ height: "100vh" }}
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        height: "100vh",
+        backgroundColor: "#f8f9fa", // Light background
+      }}
     >
-      <div className="card shadow-lg" style={{ width: "400px" }}>
-        <div className="card-header bg-primary text-white text-center">
-          <h4>{step === 1 ? "Forgot Password" : "Reset Password"}</h4>
+      <div
+        className="card shadow-lg border-0"
+        style={{
+          width: "400px",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        {/* Logo Section */}
+        <div
+          className="text-center"
+          style={{
+            backgroundColor: "#333333", // Dark background for contrast
+            padding: "30px 20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Subtle shadow
+          }}
+        >
+          <img
+            src={require("../../assets/logo.png")} // Adjust the path based on your project structure
+            alt="YatraNow Logo"
+            style={{
+              height: "40px", // Increased size for better visibility
+              marginBottom: "10px",
+            }}
+          />
         </div>
+
+        {/* Form Section */}
         <div className="card-body">
+          <h4 className="text-center mb-4 text-dark">
+            {step === 1 ? "Forgot Password" : "Reset Password"}
+          </h4>
           {message && (
             <div
               className={`alert ${
@@ -111,7 +142,7 @@ const ForgotPassword = () => {
           {step === 1 ? (
             <form onSubmit={handleSendOtp}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="email" className="form-label text-dark">
                   Email
                 </label>
                 <input
@@ -126,7 +157,7 @@ const ForgotPassword = () => {
               </div>
               <button
                 type="submit"
-                className="btn btn-primary w-100"
+                className="btn btn-warning w-100 text-dark fw-bold"
                 disabled={loading}
               >
                 {loading ? (
@@ -143,7 +174,7 @@ const ForgotPassword = () => {
           ) : (
             <form onSubmit={handleVerifyOtpAndResetPassword}>
               <div className="mb-3">
-                <label htmlFor="otp" className="form-label">
+                <label htmlFor="otp" className="form-label text-dark">
                   OTP
                 </label>
                 <input
@@ -157,7 +188,7 @@ const ForgotPassword = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="newPassword" className="form-label">
+                <label htmlFor="newPassword" className="form-label text-dark">
                   New Password
                 </label>
                 <input
@@ -171,7 +202,7 @@ const ForgotPassword = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">
+                <label htmlFor="confirmPassword" className="form-label text-dark">
                   Confirm Password
                 </label>
                 <input
@@ -186,7 +217,7 @@ const ForgotPassword = () => {
               </div>
               <button
                 type="submit"
-                className="btn btn-primary w-100"
+                className="btn btn-warning w-100 text-dark fw-bold"
                 disabled={loading}
               >
                 {loading ? (

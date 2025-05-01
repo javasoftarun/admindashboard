@@ -117,7 +117,6 @@ const Sidebar = () => {
           boxShadow: "2px 0 5px rgba(0, 0, 0, 0.2)", // Add shadow for better visibility
         }}
       >
-        <h4 className="text-center mb-4">Dashboard</h4>
         <hr />
         <ul className="nav nav-pills flex-column mb-auto">
           {/* Users Menu */}

@@ -148,7 +148,7 @@ const RegisterCab = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: "4", // Replace with the actual user ID
+          userId: localStorage.getItem("userId"), // Replace with the actual user ID
           base64Image: base64Image,
         }),
       });
@@ -160,7 +160,7 @@ const RegisterCab = () => {
       const data = await response.json();
 
       if (data.responseCode === 200) {
-        const imageUrl = data.responseData; // Extract imageUrl from responseData
+        const imageUrl = data.responseData[0].imageUrl; // Extract imageUrl from responseData
         console.log("Image URL:", imageUrl); // Log the image URL for debugging
 
         // Update the cabImageUrl field in formData

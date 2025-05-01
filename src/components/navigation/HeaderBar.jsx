@@ -4,11 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const HeaderBar = () => {
-
   const userName = localStorage.getItem("name");
   const firstName = userName ? userName.split(" ")[0] : "";
   const imageUrl = localStorage.getItem("imageUrl");
   const navigate = useNavigate();
+
   const handleLogout = () => {
     // Remove the token from localStorage
     localStorage.removeItem("authToken");
@@ -16,6 +16,7 @@ const HeaderBar = () => {
     // Redirect to the login page
     navigate("/login");
   };
+
   return (
     <nav
       className="navbar navbar-expand-lg navbar-dark bg-dark"
@@ -29,23 +30,27 @@ const HeaderBar = () => {
       }}
     >
       <div className="container-fluid">
-        {/* Sidebar Toggle Button */}
+        {/* Sidebar Toggle Button for Mobile */}
         <button
-          className="btn btn-dark d-md-none me-2"
+          className="navbar-toggler"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#mobileSidebar"
           aria-controls="mobileSidebar"
         >
-          ☰
+          <span className="navbar-toggler-icon"></span>
         </button>
 
         {/* Navbar Brand */}
-        <a className="navbar-brand fw-bold text-white" href="/">
-          YatraNow
-        </a>
+        <a className="navbar-brand" href="/index">
+        <img
+          src={require("../../assets/logo.png")} // Correct relative path
+          alt="YatraNow Logo"
+          style={{ height: "40px" }}
+        />
+      </a>
 
-        {/* Navbar Toggler */}
+        {/* Navbar Toggler for Mobile */}
         <button
           className="navbar-toggler"
           type="button"
@@ -58,7 +63,7 @@ const HeaderBar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Collapsible Navbar */}
+        {/* Collapsible Navbar for Desktop */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             {/* Notifications */}
@@ -177,7 +182,6 @@ const HeaderBar = () => {
               <button
                 className="btn nav-link dropdown-toggle d-flex align-items-center"
                 id="profileDropdown"
-                role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 style={{
@@ -193,7 +197,7 @@ const HeaderBar = () => {
                   style={{
                     width: "40px",
                     height: "40px",
-                    border: "2px solid #fff", // Subtle border for modern look
+                    border: "2px solid #fff",
                   }}
                 />
                 <span className="text-white fw-semibold">{firstName}</span>
@@ -202,9 +206,9 @@ const HeaderBar = () => {
                 className="dropdown-menu dropdown-menu-end"
                 aria-labelledby="profileDropdown"
                 style={{
-                  backgroundColor: "#343a40", // Dark background for dropdown
-                  border: "none", // Remove border
-                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", // Subtle shadow for dropdown
+                  backgroundColor: "#343a40",
+                  border: "none",
+                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
                 }}
               >
                 <li>
@@ -215,12 +219,8 @@ const HeaderBar = () => {
                       backgroundColor: "transparent",
                       transition: "background-color 0.2s",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#495057")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "transparent")
-                    }
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
                     onClick={() => navigate("/profile-settings")}
                   >
                     Profile
@@ -234,13 +234,9 @@ const HeaderBar = () => {
                       backgroundColor: "transparent",
                       transition: "background-color 0.2s",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#495057")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "transparent")
-                    }
-                    onClick={() => navigate("/account-Settings")}
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+                    onClick={() => navigate("/account-settings")}
                   >
                     Settings
                   </button>
@@ -256,12 +252,8 @@ const HeaderBar = () => {
                       backgroundColor: "transparent",
                       transition: "background-color 0.2s",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#495057")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "transparent")
-                    }
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
                     onClick={handleLogout}
                   >
                     Logout

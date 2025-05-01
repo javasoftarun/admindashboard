@@ -85,14 +85,42 @@ const AdminRegistration = () => {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center bg-dark text-white"
-      style={{ height: "100vh" }}
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        height: "100vh",
+        backgroundColor: "#f8f9fa", // Light background
+      }}
     >
-      <div className="card shadow-lg" style={{ width: "400px" }}>
-        <div className="card-header bg-primary text-white text-center">
-          <h4>Admin Registration</h4>
+      <div
+        className="card shadow-lg border-0"
+        style={{
+          width: "400px",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        {/* Logo Section */}
+        <div
+          className="text-center"
+          style={{
+            backgroundColor: "#333333", // Dark background for contrast
+            padding: "30px 20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Subtle shadow
+          }}
+        >
+          <img
+            src={require("../../assets/logo.png")} // Adjust the path based on your project structure
+            alt="YatraNow Logo"
+            style={{
+              height: "50px", // Increased size for better visibility
+              marginBottom: "10px",
+            }}
+          />
         </div>
+
+        {/* Registration Form */}
         <div className="card-body">
+          <h4 className="text-center mb-4 text-dark">Admin Registration</h4>
           {message && (
             <div
               className={`alert ${
@@ -106,7 +134,7 @@ const AdminRegistration = () => {
           {!isRegistered ? (
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="name" className="form-label text-dark">
                   Name
                 </label>
                 <input
@@ -122,7 +150,7 @@ const AdminRegistration = () => {
                 {errors.name && <div className="invalid-feedback">{errors.name}</div>}
               </div>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="email" className="form-label text-dark">
                   Email
                 </label>
                 <input
@@ -138,7 +166,7 @@ const AdminRegistration = () => {
                 {errors.email && <div className="invalid-feedback">{errors.email}</div>}
               </div>
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">
+                <label htmlFor="password" className="form-label text-dark">
                   Password
                 </label>
                 <input
@@ -155,7 +183,7 @@ const AdminRegistration = () => {
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="phone" className="form-label">
+                <label htmlFor="phone" className="form-label text-dark">
                   Phone
                 </label>
                 <input
@@ -166,13 +194,13 @@ const AdminRegistration = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
-                  maxLength={10} // Limit to 15 characters (adjust as needed)
+                  maxLength={10} // Limit to 10 characters
                 />
                 {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
               </div>
               <button
                 type="submit"
-                className="btn btn-primary w-100"
+                className="btn btn-warning w-100 text-dark fw-bold"
                 disabled={loading}
               >
                 {loading ? (
@@ -185,14 +213,7 @@ const AdminRegistration = () => {
                   "Register"
                 )}
               </button>
-              <div className="text-center mt-3">
-                <p>
-                  Already have an account?{" "}
-                  <Link to="/login" className="text-primary">
-                    Login here
-                  </Link>
-                </p>
-              </div>
+             
             </form>
           ) : (
             <div className="text-center mt-3">
@@ -202,6 +223,22 @@ const AdminRegistration = () => {
               </Link>
             </div>
           )}
+        </div>
+
+        {/* Footer */}
+        <div
+          className="card-footer text-center"
+          style={{
+            backgroundColor: "white", // Yellow background
+            padding: "15px",
+          }}
+        >
+          <small className="text-dark">
+            Already have an account?{" "}
+            <Link to="/login" className="text-dark fw-bold">
+              Login
+            </Link>
+          </small>
         </div>
       </div>
     </div>

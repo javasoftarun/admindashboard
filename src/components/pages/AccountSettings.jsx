@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../layout/Layout";
+import SHA1 from "crypto-js/sha1";
 
 const AccountSettings = () => {
   const [formData, setFormData] = useState({
@@ -41,29 +42,38 @@ const AccountSettings = () => {
     }
 
     try {
+      const hashedOldPassword = formData.oldPassword ? SHA1(formData.oldPassword).toString() : "";
+      const hashedNewPassword = SHA1(formData.password).toString();
+      // Prepare the request body
+      const requestBody = {
+        userId: localStorage.getItem("userId"), // Retrieve userId from localStorage
+        oldPassword: hashedOldPassword, // Use hashed old password
+        newPassword: hashedNewPassword, // Use hashed new password
+      };
+
       // Call API to update account settings
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/update-account", {
-        method: "POST",
+      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/update/password", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
         const responseData = await response.json();
         if (responseData.responseMessage === "success") {
-          setMessage("Account settings updated successfully.");
+          setMessage("Password updated successfully.");
         } else {
-          setMessage(responseData.responseMessage || "Failed to update account settings.");
+          setMessage(responseData.responseMessage || "Failed to update password.");
         }
       } else {
         const errorData = await response.json();
-        setMessage(errorData.responseMessage || "Failed to update account settings.");
+        setMessage(errorData.responseMessage || "Failed to update password.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("An error occurred while updating account settings.");
+      setMessage("An error occurred while updating the password.");
     } finally {
       setLoading(false);
     }
@@ -110,11 +120,10 @@ const AccountSettings = () => {
             <h4 className="fw-bold">Account Settings</h4>
           </div>
           <div className="card-body">
-          {message && (
+            {message && (
               <div
-                className={`alert ${
-                  message.includes("success") ? "alert-success" : "alert-danger"
-                } alert-dismissible fade show`}
+                className={`alert ${message.includes("success") ? "alert-success" : "alert-danger"
+                  } alert-dismissible fade show`}
                 role="alert"
               >
                 {message}
@@ -130,6 +139,22 @@ const AccountSettings = () => {
             <form onSubmit={handleSubmit}>
               {/* Security Section */}
               <h5 className="mb-3">Security</h5>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label htmlFor="oldPassword" className="form-label small">
+                    Old Password
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control form-control-sm"
+                    id="oldPassword"
+                    name="oldPassword"
+                    value={formData.oldPassword || ""}
+                    onChange={handleChange}
+                    placeholder="Enter old password"
+                  />
+                </div>
+              </div>
               <div className="row mb-3">
                 <div className="col-md-6">
                   <label htmlFor="password" className="form-label small">
