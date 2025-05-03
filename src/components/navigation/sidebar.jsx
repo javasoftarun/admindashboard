@@ -52,6 +52,17 @@ const Sidebar = () => {
               </ul>
             </li>
 
+            {/* Notifications Menu */}
+            <li>
+              <Link
+                to="/notifications"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <i className="fa fa-bell me-2"></i>
+                <span>Notifications</span>
+              </Link>
+            </li>
+
             {/* Cab Management Menu */}
             <li>
               <Link
@@ -76,6 +87,25 @@ const Sidebar = () => {
                 <li>
                   <Link to="/cab-reports" className="nav-link text-white">
                     <i className="fa fa-chart-bar me-2"></i> Cab Reports
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            {/* Configuration Menu */}
+            <li>
+              <Link
+                to="#"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={() => handleMenuClick("configurationMenu")}
+              >
+                <i className="fa fa-wrench me-2"></i>
+                <span>Configuration</span>
+              </Link>
+              <ul className="collapse list-unstyled ps-3" id="configurationMenu">
+                <li>
+                  <Link to="/create-offer" className="nav-link text-white">
+                    <i className="fa fa-gift me-2"></i> Create Offer
                   </Link>
                 </li>
               </ul>
@@ -138,6 +168,17 @@ const Sidebar = () => {
             </ul>
           </li>
 
+          {/* Notifications Menu */}
+          <li>
+            <Link
+              to="/notifications"
+              className="nav-link text-white d-flex align-items-center"
+            >
+              <i className="fa fa-bell me-2"></i>
+              <span>Notifications</span>
+            </Link>
+          </li>
+
           {/* Cab Management Menu */}
           <li>
             <Link
@@ -165,6 +206,46 @@ const Sidebar = () => {
               <li>
                 <Link to="/cab-reports" className="nav-link text-white">
                   <i className="fa fa-chart-bar me-2"></i> Cab Reports
+                </Link>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <Link
+              to="#"
+              className="nav-link text-white d-flex align-items-center"
+              onClick={() => handleMenuClick("bookingManagementMenu")}
+            >
+              <i className="fa fa-calendar-alt me-2"></i>
+              <span>Booking Management</span>
+            </Link>
+            <ul className="collapse list-unstyled ps-3" id="bookingManagementMenu">
+              <li>
+                <Link to="/bookings" className="nav-link text-white">
+                  <i className="fa fa-list me-2"></i> Show All Bookings
+                </Link>
+              </li>
+            </ul>
+          </li>
+
+          {/* Configuration Menu */}
+          <li>
+            <Link
+              to="#"
+              className="nav-link text-white d-flex align-items-center"
+              onClick={() => handleMenuClick("configurationMenuDesktop")}
+            >
+              <i className="fa fa-wrench me-2"></i>
+              <span>Configuration</span>
+            </Link>
+            <ul
+              className="collapse list-unstyled ps-3"
+              id="configurationMenuDesktop"
+            >
+              <li>
+                <Link to="/create-user-offers" className="nav-link text-white">
+                  <i className="fa fa-gift me-2"></i> Create Offer
                 </Link>
               </li>
             </ul>

@@ -83,12 +83,12 @@ const ProfileSettings = () => {
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
-
+  
           const maxWidth = 300;
           const maxHeight = 300;
           let width = img.width;
           let height = img.height;
-
+  
           if (width > height) {
             if (width > maxWidth) {
               height = Math.round((height * maxWidth) / width);
@@ -100,19 +100,21 @@ const ProfileSettings = () => {
               height = maxHeight;
             }
           }
-
+  
           canvas.width = width;
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
-
-          const base64Image = canvas.toDataURL("image/jpeg", 0.8);
+  
+          let base64Image = canvas.toDataURL("image/jpeg", 0.8);
+          // Remove the prefix (e.g., "data:image/jpeg;base64,")
+          base64Image = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
           resolve(base64Image);
         };
-
+  
         img.onerror = (error) => reject(error);
         img.src = event.target.result;
       };
-
+  
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });

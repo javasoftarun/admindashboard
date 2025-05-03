@@ -14,6 +14,7 @@ const EditCab = () => {
   const [errors, setErrors] = useState({});
   const [modalMessage, setModalMessage] = useState(""); // Message to display in the modal
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     registrationId: cabData?.registrationId || 0,
@@ -46,9 +47,9 @@ const EditCab = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (e.target.type === "number") {
-        if (name === "perKmRate" && value.length > 2) return; // Restrict to 2 digits
-        if (name === "baseFare" && value.length > 5) return; // Restrict to 4 digits
-      }
+      if (name === "perKmRate" && value.length > 2) return; // Restrict to 2 digits
+      if (name === "baseFare" && value.length > 5) return; // Restrict to 4 digits
+    }
     if (name.startsWith("cab.")) {
       const cabField = name.split(".")[1];
       setFormData((prev) => ({
@@ -59,7 +60,7 @@ const EditCab = () => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
     if (name === "address") {
-        fetchAddressSuggestions(value, setSuggestions); // Pass setSuggestions here
+      fetchAddressSuggestions(value, setSuggestions); // Pass setSuggestions here
     }
   };
 
@@ -68,14 +69,14 @@ const EditCab = () => {
       setSuggestions([]); // Clear suggestions if query is empty
       return;
     }
-  
+
     if (!window.google || !window.google.maps) {
       console.error("Google Maps API is not loaded.");
       return;
     }
-  
+
     const autocompleteService = new window.google.maps.places.AutocompleteService();
-  
+
     autocompleteService.getPlacePredictions(
       {
         input: query,
@@ -94,13 +95,13 @@ const EditCab = () => {
   const handleAddressSelect = (selectedAddress) => {
     setFormData((prev) => ({ ...prev, address: selectedAddress }));
     setSuggestions([]); // Clear suggestions
-  
+
     if (!window.google || !window.google.maps) {
       console.error("Google Maps API is not loaded.");
       return;
     }
     const geocoder = new window.google.maps.Geocoder();
-  
+
     geocoder.geocode({ address: selectedAddress }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
         const location = results[0].geometry.location;
@@ -242,11 +243,11 @@ const EditCab = () => {
     if (!formData.ownerName.trim()) {
       newErrors.ownerName = "Owner name is required.";
     } else if (formData.ownerName.length < 3) {
-      newErrors.ownerName = "Owner name must be at least 3 characters long."; 
+      newErrors.ownerName = "Owner name must be at least 3 characters long.";
     } else if (!/^[a-zA-Z\s]+$/.test(formData.ownerName)) {
-      newErrors.ownerName = "Owner name must contain only letters and spaces."; 
+      newErrors.ownerName = "Owner name must contain only letters and spaces.";
     }
-    
+
     if (!formData.address.trim()) {
       newErrors.address = "Address is required.";
     }
@@ -263,7 +264,7 @@ const EditCab = () => {
       newErrors.cabType = "Cab type is required.";
     }
     if (!formData.cab.cabInsurance.trim()) {
-      newErrors.cabInsurance = "Cab insurance is required."; 
+      newErrors.cabInsurance = "Cab insurance is required.";
     }
     if (!formData.cab.cabNumber.trim()) {
       newErrors.cabNumber = "Cab number is required.";
@@ -287,11 +288,11 @@ const EditCab = () => {
       newErrors.cabImageUpload = "Cab image is required. Please upload an image.";
     }
     if (!formData.perKmRate || formData.perKmRate <= 0 || formData.perKmRate > 100) {
-        newErrors.perKmRate = "Per Km Rate must be between 1 and 100.";
+      newErrors.perKmRate = "Per Km Rate must be between 1 and 100.";
     }
-    
+
     if (!formData.baseFare || formData.baseFare <= 0) {
-    newErrors.baseFare = "Base Fare must be greater than 0.";
+      newErrors.baseFare = "Base Fare must be greater than 0.";
     }
 
     setErrors(newErrors);
@@ -300,38 +301,41 @@ const EditCab = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!validateForm()) {
-        return; // Stop submission if validation fails
-      }
-  
-    const formDataToSend = new FormData();
-    formDataToSend.append("registrationId", formData.registrationId);
-    formDataToSend.append("ownerName", formData.ownerName);
-    formDataToSend.append("driverName", formData.driverName);
-    formDataToSend.append("driverContact", formData.driverContact);
-    formDataToSend.append("driverLicense", formData.driverLicense);
-    formDataToSend.append("address", formData.address);
-    formDataToSend.append("latitude", formData.latitude);
-    formDataToSend.append("longitude", formData.longitude);
-    formDataToSend.append("perKmRate", formData.perKmRate);
-    formDataToSend.append("baseFare", formData.baseFare);
-    formDataToSend.append("status", formData.status);
-    formDataToSend.append("cabId", formData.cab.cabId);
-    formDataToSend.append("cabName", formData.cab.cabName);
-    formDataToSend.append("cabType", formData.cab.cabType);
-    formDataToSend.append("cabNumber", formData.cab.cabNumber);
-    formDataToSend.append("cabModel", formData.cab.cabModel);
-    formDataToSend.append("cabColor", formData.cab.cabColor);
-    formDataToSend.append("cabInsurance", formData.cab.cabInsurance);
-    formDataToSend.append("cabCapacity", formData.cab.cabCapacity);
-    formDataToSend.append("cabCity", formData.cab.cabCity);
-    formDataToSend.append("cabState", formData.cab.cabState);
-  
-    if (formData.cab.cabImageUrl instanceof File) {
-      formDataToSend.append("cabImage", formData.cab.cabImageUrl);
+      return; // Stop submission if validation fails
     }
   
+    setLoading(true); // Set loading to true at the start
+  
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("registrationId", formData.registrationId);
+      formDataToSend.append("ownerName", formData.ownerName);
+      formDataToSend.append("driverName", formData.driverName);
+      formDataToSend.append("driverContact", formData.driverContact);
+      formDataToSend.append("driverLicense", formData.driverLicense);
+      formDataToSend.append("address", formData.address);
+      formDataToSend.append("latitude", formData.latitude);
+      formDataToSend.append("longitude", formData.longitude);
+      formDataToSend.append("perKmRate", formData.perKmRate);
+      formDataToSend.append("baseFare", formData.baseFare);
+      formDataToSend.append("status", formData.status);
+      formDataToSend.append("cabId", formData.cab.cabId);
+      formDataToSend.append("cabName", formData.cab.cabName);
+      formDataToSend.append("cabType", formData.cab.cabType);
+      formDataToSend.append("cabNumber", formData.cab.cabNumber);
+      formDataToSend.append("cabModel", formData.cab.cabModel);
+      formDataToSend.append("cabColor", formData.cab.cabColor);
+      formDataToSend.append("cabInsurance", formData.cab.cabInsurance);
+      formDataToSend.append("cabCapacity", formData.cab.cabCapacity);
+      formDataToSend.append("cabCity", formData.cab.cabCity);
+      formDataToSend.append("cabState", formData.cab.cabState);
+  
+      if (formData.cab.cabImageUrl instanceof File) {
+        formDataToSend.append("cabImage", formData.cab.cabImageUrl);
+      }
+  
       const response = await fetch(
         `https://carbookingservice.onrender.com/api/cab/registration/update/${formData.registrationId}`,
         {
@@ -356,6 +360,8 @@ const EditCab = () => {
       console.error("Error updating cab:", err);
       setModalMessage("An error occurred while updating the cab. Please try again.");
       setIsModalVisible(true); // Show error modal
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -447,20 +453,20 @@ const EditCab = () => {
                   />
                   {errors.address && <div className="invalid-feedback">{errors.address}</div>}
                   {/* Address Suggestions */}
-                    {suggestions.length > 0 && (
+                  {suggestions.length > 0 && (
                     <ul className="list-group mt-2">
-                        {suggestions.map((suggestion, index) => (
+                      {suggestions.map((suggestion, index) => (
                         <li
-                            key={index}
-                            className="list-group-item list-group-item-action"
-                            onClick={() => handleAddressSelect(suggestion)}
-                            style={{ cursor: "pointer" }}
+                          key={index}
+                          className="list-group-item list-group-item-action"
+                          onClick={() => handleAddressSelect(suggestion)}
+                          style={{ cursor: "pointer" }}
                         >
-                            {suggestion}
+                          {suggestion}
                         </li>
-                        ))}
+                      ))}
                     </ul>
-                    )}
+                  )}
                 </div>
               </div>
             </div>
@@ -651,7 +657,7 @@ const EditCab = () => {
                     name="perKmRate"
                     value={formData.perKmRate}
                     onChange={handleChange}
-                    
+
                   />
                   {errors.perKmRate && <div className="invalid-feedback">{errors.perKmRate}</div>}
                 </div>
@@ -666,7 +672,7 @@ const EditCab = () => {
                     name="baseFare"
                     value={formData.baseFare}
                     onChange={handleChange}
-                    
+
                   />
                   {errors.baseFare && <div className="invalid-feedback">{errors.baseFare}</div>}
                 </div>
@@ -680,7 +686,7 @@ const EditCab = () => {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    
+
                   >
                     {errors.status && <div className="invalid-feedback">{errors.status}</div>}
                     <option value="Active">Active</option>
@@ -692,13 +698,22 @@ const EditCab = () => {
           </div>
 
           <div className="d-flex justify-content-end">
-            <button type="submit" className="btn btn-primary me-2">
-              Save Changes
+            <button type="submit" className="btn btn-primary me-2" disabled={loading}>
+              {loading ? (
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              ) : (
+                "Save Changes"
+              )}
             </button>
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => navigate("/show-cabs")}
+              disabled={loading} // Disable cancel button while loading
             >
               Cancel
             </button>

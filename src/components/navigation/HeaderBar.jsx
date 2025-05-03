@@ -10,10 +10,7 @@ const HeaderBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Remove the token from localStorage
     localStorage.removeItem("authToken");
-
-    // Redirect to the login page
     navigate("/login");
   };
 
@@ -26,7 +23,7 @@ const HeaderBar = () => {
         right: 0,
         width: "100%",
         zIndex: 1030,
-        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", // Subtle shadow for modern look
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
       }}
     >
       <div className="container-fluid">
@@ -43,12 +40,12 @@ const HeaderBar = () => {
 
         {/* Navbar Brand */}
         <a className="navbar-brand" href="/index">
-        <img
-          src={require("../../assets/logo.png")} // Correct relative path
-          alt="YatraNow Logo"
-          style={{ height: "40px" }}
-        />
-      </a>
+          <img
+            src={require("../../assets/logo.png")}
+            alt="YatraNow Logo"
+            style={{ height: "40px" }}
+          />
+        </a>
 
         {/* Navbar Toggler for Mobile */}
         <button
@@ -66,117 +63,6 @@ const HeaderBar = () => {
         {/* Collapsible Navbar for Desktop */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            {/* Notifications */}
-            <li className="nav-item dropdown">
-              <button
-                className="btn btn-outline-light position-relative"
-                id="notificationsDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style={{
-                  borderRadius: "50%",
-                  padding: "0.5rem",
-                  width: "40px",
-                  height: "40px",
-                }}
-              >
-                <i className="bi bi-bell"></i>
-                <span
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style={{ fontSize: "0.6rem" }}
-                >
-                  3
-                </span>
-              </button>
-              <ul
-                className="dropdown-menu dropdown-menu-end"
-                aria-labelledby="notificationsDropdown"
-                style={{
-                  backgroundColor: "#2c2f33",
-                  border: "none",
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
-                  width: "350px",
-                  padding: "0",
-                }}
-              >
-                <li className="dropdown-header text-white fw-bold py-3 px-4" style={{ borderBottom: "1px solid #444" }}>
-                  Notifications
-                </li>
-                <li>
-                  <div
-                    className="dropdown-item d-flex align-items-start text-white py-3 px-4"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#3a3d42")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                  >
-                    <i className="bi bi-calendar-check me-3 text-success fs-4"></i>
-                    <div>
-                      <span className="fw-semibold">New booking: John Doe</span>
-                      <small className="d-block text-muted">Pickup at 10:30 AM</small>
-                      <small className="d-block text-muted">5 mins ago</small>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div
-                    className="dropdown-item d-flex align-items-start text-white py-3 px-4"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#3a3d42")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                  >
-                    <i className="bi bi-person-plus me-3 text-info fs-4"></i>
-                    <div>
-                      <span className="fw-semibold">Driver registration request</span>
-                      <small className="d-block text-muted">Jane Smith</small>
-                      <small className="d-block text-muted">10 mins ago</small>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div
-                    className="dropdown-item d-flex align-items-start text-white py-3 px-4"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#3a3d42")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                  >
-                    <i className="bi bi-cash-coin me-3 text-warning fs-4"></i>
-                    <div>
-                      <span className="fw-semibold">Payment received</span>
-                      <small className="d-block text-muted">$50 for Booking #12345</small>
-                      <small className="d-block text-muted">15 mins ago</small>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" style={{ borderColor: "#444", margin: "0" }} />
-                </li>
-                <li>
-                  <button
-                    className="dropdown-item text-center text-white fw-bold py-3"
-                    type="button"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#3a3d42")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                  >
-                    View All Notifications
-                  </button>
-                </li>
-              </ul>
-            </li>
-
             {/* Profile Dropdown */}
             <li className="nav-item dropdown">
               <button
@@ -215,45 +101,16 @@ const HeaderBar = () => {
                   <button
                     className="dropdown-item text-white"
                     type="button"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
                     onClick={() => navigate("/profile-settings")}
                   >
-                    Profile
+                    User Profile
                   </button>
                 </li>
+                
                 <li>
                   <button
                     className="dropdown-item text-white"
                     type="button"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                    onClick={() => navigate("/account-settings")}
-                  >
-                    Settings
-                  </button>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" style={{ borderColor: "#6c757d" }} />
-                </li>
-                <li>
-                  <button
-                    className="dropdown-item text-white"
-                    type="button"
-                    style={{
-                      backgroundColor: "transparent",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#495057")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
                     onClick={handleLogout}
                   >
                     Logout
