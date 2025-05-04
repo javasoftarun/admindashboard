@@ -1,7 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const HeaderBar = () => {
   const userName = localStorage.getItem("name");
@@ -102,16 +100,34 @@ const HeaderBar = () => {
                     className="dropdown-item text-white"
                     type="button"
                     onClick={() => navigate("/profile-settings")}
+                    style={{
+                      backgroundColor: "transparent",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#007bff")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "transparent")
+                    }
                   >
                     User Profile
                   </button>
                 </li>
-                
+
                 <li>
                   <button
                     className="dropdown-item text-white"
                     type="button"
                     onClick={handleLogout}
+                    style={{
+                      backgroundColor: "transparent",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#007bff")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "transparent")
+                    }
                   >
                     Logout
                   </button>

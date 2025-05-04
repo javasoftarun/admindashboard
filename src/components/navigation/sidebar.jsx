@@ -171,6 +171,8 @@ const Sidebar = () => {
         }}
       >
         <hr />
+        <hr />
+        <hr />
         <ul className="nav nav-pills flex-column mb-auto">
           {/* Users Menu */}
           <li>
@@ -238,12 +240,12 @@ const Sidebar = () => {
             <Link
               to="#"
               className="nav-link text-white d-flex align-items-center"
-              onClick={() => handleMenuClick("bookingManagementMenu")}
+              onClick={() => handleMenuClick("bookingManagementMenuDesktop")}
             >
               <i className="fa fa-calendar-alt me-2"></i>
               <span>Booking Management</span>
             </Link>
-            <ul className="collapse list-unstyled ps-3" id="bookingManagementMenu">
+            <ul className="collapse list-unstyled ps-3" id="bookingManagementMenuDesktop">
               <li>
                 <Link to="/bookings" className="nav-link text-white">
                   <i className="fa fa-list me-2"></i> Show All Bookings

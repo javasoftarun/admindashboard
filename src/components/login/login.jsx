@@ -76,16 +76,17 @@ const Login = () => {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center"
+      className="container-fluid d-flex justify-content-center align-items-center"
       style={{
-        height: "100vh",
+        minHeight: "100vh", // Full height of the viewport
         backgroundColor: "#f8f9fa", // Light background
+        padding: "15px", // Add padding for smaller screens
       }}
     >
       <div
-        className="card shadow-lg border-0"
+        className="card shadow-lg border-0 w-100"
         style={{
-          width: "400px",
+          maxWidth: "400px", // Limit the width for larger screens
           borderRadius: "10px",
           overflow: "hidden",
         }}
@@ -107,7 +108,6 @@ const Login = () => {
               marginBottom: "10px",
             }}
           />
-          
         </div>
 
         {/* Login Form */}
@@ -184,10 +184,11 @@ const Login = () => {
         <div
           className="card-footer text-center"
           style={{
-            backgroundColor: "Gray",
+            backgroundColor: "#333333", // Dark footer for contrast
             padding: "15px",
           }}
         >
+          <p className="text-white mb-0">Welcome to YatraNow!</p>
         </div>
       </div>
     </div>
