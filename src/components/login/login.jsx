@@ -184,16 +184,10 @@ const Login = () => {
         <div
           className="card-footer text-center"
           style={{
-            backgroundColor: "white", // Yellow background
+            backgroundColor: "Gray",
             padding: "15px",
           }}
         >
-          <small className="text-dark">
-            Don't have an account?{" "}
-            <Link to="/register-admin" className="text-dark fw-bold">
-              Register
-            </Link>
-          </small>
         </div>
       </div>
     </div>

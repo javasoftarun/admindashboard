@@ -26,12 +26,12 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/register-admin" element={<AdminRegistration />} />
+        <Route path="/register-admin" element={<ProtectedRoute><AdminRegistration /></ProtectedRoute>} />
         <Route path="/index" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-        <Route path="/users" element={<ProtectedRoute><ShowUsers /></ProtectedRoute>} /> {/* Added ProtectedRoute for ShowUsers */}
-        <Route path="/register-cab" element={<ProtectedRoute><RegisterCab /></ProtectedRoute>} /> {/* Added ProtectedRoute for RegisterCab */}
-        <Route path="/show-cabs" element={<ProtectedRoute><ShowRegisteredCabs /></ProtectedRoute>} /> {/* Added ProtectedRoute for ShowRegisteredCabs */}
-        <Route path="/edit-cab/:id" element={<ProtectedRoute><EditCab /></ProtectedRoute>} /> {/* Added ProtectedRoute for EditCab */}
+        <Route path="/users" element={<ProtectedRoute><ShowUsers /></ProtectedRoute>} />
+        <Route path="/register-cab" element={<ProtectedRoute><RegisterCab /></ProtectedRoute>} /> 
+        <Route path="/show-cabs" element={<ProtectedRoute><ShowRegisteredCabs /></ProtectedRoute>} /> 
+        <Route path="/edit-cab/:id" element={<ProtectedRoute><EditCab /></ProtectedRoute>} />
         <Route path="/profile-settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
         <Route path="/account-settings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
         <Route path="/create-user-offers" element={<ProtectedRoute><UserOffers /></ProtectedRoute>} />
