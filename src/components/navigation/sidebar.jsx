@@ -166,7 +166,7 @@ const Sidebar = () => {
         className="d-none d-md-flex flex-column flex-shrink-0 p-3 bg-dark text-white"
         style={{
           width: "250px",
-          height: "100vh",
+          height: "auto",
           boxShadow: "2px 0 5px rgba(0, 0, 0, 0.2)", // Add shadow for better visibility
         }}
       >

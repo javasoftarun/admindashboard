@@ -15,11 +15,13 @@ const Layout = ({ children }) => {
 
         {/* Content */}
         <div
-          className="flex-grow-1 overflow-auto"
+          className="flex-grow-1"
           style={{
             marginTop: "76px", // Adjust for the height of the fixed header
             paddingLeft: "15px",
             paddingRight: "15px",
+            overflowY: "auto", 
+            overflowX: "hidden",
           }}
         >
           {children}
