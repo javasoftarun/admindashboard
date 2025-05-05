@@ -20,11 +20,12 @@ const HeaderBar = () => {
         top: 0,
         right: 0,
         width: "100%",
+        height: "70px", // Fixed height for the header
         zIndex: 1030,
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
       }}
     >
-      <div className="container-fluid">
+      <div className="container-fluid d-flex justify-content-between align-items-center">
         {/* Sidebar Toggle Button for Mobile */}
         <button
           className="navbar-toggler"
@@ -37,7 +38,7 @@ const HeaderBar = () => {
         </button>
 
         {/* Navbar Brand */}
-        <a className="navbar-brand" href="/index">
+        <a className="navbar-brand d-flex align-items-center" href="/index">
           <img
             src={require("../../assets/logo.png")}
             alt="YatraNow Logo"
@@ -45,94 +46,78 @@ const HeaderBar = () => {
           />
         </a>
 
-        {/* Navbar Toggler for Mobile */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        {/* Collapsible Navbar for Desktop */}
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            {/* Profile Dropdown */}
-            <li className="nav-item dropdown">
+        {/* Profile Dropdown */}
+        <div className="d-flex align-items-center">
+          <button
+            className="btn nav-link dropdown-toggle d-flex align-items-center"
+            id="profileDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+            }}
+          >
+            <img
+              src={imageUrl}
+              alt="User"
+              className="rounded-circle me-2"
+              style={{
+                width: "40px",
+                height: "40px",
+                border: "2px solid #fff",
+              }}
+            />
+            <span className="text-white fw-semibold d-none d-md-inline">
+              {firstName}
+            </span>
+          </button>
+          <ul
+            className="dropdown-menu dropdown-menu-end"
+            aria-labelledby="profileDropdown"
+            style={{
+              backgroundColor: "#343a40",
+              border: "none",
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <li>
               <button
-                className="btn nav-link dropdown-toggle d-flex align-items-center"
-                id="profileDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+                className="dropdown-item text-white"
+                type="button"
+                onClick={() => navigate("/profile-settings")}
                 style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
+                  backgroundColor: "transparent",
                 }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = "#007bff")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = "transparent")
+                }
               >
-                <img
-                  src={imageUrl}
-                  alt="User"
-                  className="rounded-circle me-2"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    border: "2px solid #fff",
-                  }}
-                />
-                <span className="text-white fw-semibold">{firstName}</span>
+                User Profile
               </button>
-              <ul
-                className="dropdown-menu dropdown-menu-end"
-                aria-labelledby="profileDropdown"
-                style={{
-                  backgroundColor: "#343a40",
-                  border: "none",
-                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                <li>
-                  <button
-                    className="dropdown-item text-white"
-                    type="button"
-                    onClick={() => navigate("/profile-settings")}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#007bff")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "transparent")
-                    }
-                  >
-                    User Profile
-                  </button>
-                </li>
+            </li>
 
-                <li>
-                  <button
-                    className="dropdown-item text-white"
-                    type="button"
-                    onClick={handleLogout}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#007bff")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "transparent")
-                    }
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
+            <li>
+              <button
+                className="dropdown-item text-white"
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  backgroundColor: "transparent",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = "#007bff")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = "transparent")
+                }
+              >
+                Logout
+              </button>
             </li>
           </ul>
         </div>

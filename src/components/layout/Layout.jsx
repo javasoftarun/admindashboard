@@ -4,7 +4,7 @@ import Sidebar from "../navigation/sidebar";
 
 const Layout = ({ children }) => {
   return (
-    <div className="d-flex" style={{ height: "100vh", overflow: "hidden" }}>
+    <div className="d-flex" style={{ height: "100vh", overflow: "auto" }}>
       {/* Sidebar */}
       <Sidebar />
 
@@ -17,11 +17,11 @@ const Layout = ({ children }) => {
         <div
           className="flex-grow-1"
           style={{
-            marginTop: "76px", // Adjust for the height of the fixed header
-            paddingLeft: "15px",
-            paddingRight: "15px",
+            marginTop: "70px",
+            paddingLeft: "10px",
+            paddingRight: "10px",
             overflowY: "auto", 
-            overflowX: "hidden",
+            overflowX: "auto",
           }}
         >
           {children}

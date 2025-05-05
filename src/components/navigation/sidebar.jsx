@@ -122,7 +122,7 @@ const Sidebar = () => {
               </Link>
               <ul className="collapse list-unstyled ps-3" id="configurationMenu">
                 <li>
-                  <Link to="/create-offer" className="nav-link text-white">
+                  <Link to="/create-user-offers" className="nav-link text-white">
                     <i className="fa fa-gift me-2"></i> Create Offer
                   </Link>
                 </li>
