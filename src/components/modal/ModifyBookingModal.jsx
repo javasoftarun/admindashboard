@@ -1,17 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false); // State to handle loading during API call
-  const [error, setError] = useState(null); // State to handle API errors
-  const [success, setSuccess] = useState(null); // State to handle success messages
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
+  // Refs for Google Places Autocomplete
+  const pickupRef = useRef(null);
+  const dropRef = useRef(null);
   useEffect(() => {
     if (booking) {
-      setFormData(booking); // Initialize form data with booking details
+      setFormData(booking); 
     }
   }, [booking]);
+
+  // Re-initialize autocomplete when the modal is opened
+  useEffect(() => {
+    if (show && window.google && pickupRef.current && dropRef.current) {
+      // Initialize Google Places Autocomplete for Pickup Location
+      const pickupAutocomplete = new window.google.maps.places.Autocomplete(
+        pickupRef.current,
+        {
+          types: ["geocode"], // Restrict to geocoded addresses
+          componentRestrictions: { country: "in" }, // Restrict to India
+        }
+      );
+      pickupAutocomplete.addListener("place_changed", () => {
+        const place = pickupAutocomplete.getPlace();
+        setFormData((prevData) => ({
+          ...prevData,
+          pickupLocation: place.formatted_address,
+        }));
+      });
+
+      // Initialize Google Places Autocomplete for Drop Location
+      const dropAutocomplete = new window.google.maps.places.Autocomplete(
+        dropRef.current,
+        {
+          types: ["geocode"],
+          componentRestrictions: { country: "in" },
+        }
+      );
+      dropAutocomplete.addListener("place_changed", () => {
+        const place = dropAutocomplete.getPlace();
+        setFormData((prevData) => ({
+          ...prevData,
+          dropLocation: place.formatted_address,
+        }));
+      });
+    }
+  }, [show]); // Re-initialize when `show` changes
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,8 +95,8 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
       );
 
       if (response.data.responseCode === 200) {
-        setSuccess("Booking updated successfully!"); // Show success message
-        onSave(formData); // Pass the updated booking to the parent component
+        setSuccess("Booking updated successfully!"); 
+        onSave(formData);
         
       } else {
         setError(response.data.responseMessage || "Failed to update booking.");
@@ -68,7 +108,7 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
     }
   };
 
-  if (!show) return null; // Don't render the modal if `show` is false
+  if (!show) return null;
 
   return (
     <div
@@ -149,33 +189,77 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
                 {/* Location Details Section */}
                 <h6 className="text-primary mb-3">Location Details</h6>
                 <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label htmlFor="pickupLocation" className="form-label">
-                      Pickup Location
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="pickupLocation"
-                      name="pickupLocation"
-                      value={formData.pickupLocation || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label htmlFor="dropLocation" className="form-label">
-                      Drop Location
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="dropLocation"
-                      name="dropLocation"
-                      value={formData.dropLocation || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
+  <div className="col-md-6 mb-3">
+    <label htmlFor="pickupLocation" className="form-label">
+      Pickup Location
+    </label>
+    <div className="input-group">
+      <input
+        type="text"
+        className="form-control"
+        id="pickupLocation"
+        name="pickupLocation"
+        ref={pickupRef} // Attach ref for Google Places Autocomplete
+        value={formData.pickupLocation || ""} // Use value instead of defaultValue
+        onChange={handleChange}
+      />
+      <button
+        type="button"
+        className="btn btn-outline-secondary"
+        onClick={() => {
+          setFormData((prevData) => ({
+            ...prevData,
+            pickupLocation: "",
+          }));
+          // Re-initialize Google Places Autocomplete
+          if (pickupRef.current) {
+            new window.google.maps.places.Autocomplete(pickupRef.current, {
+              types: ["geocode"],
+              componentRestrictions: { country: "in" },
+            });
+          }
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+  <div className="col-md-6 mb-3">
+    <label htmlFor="dropLocation" className="form-label">
+      Drop Location
+    </label>
+    <div className="input-group">
+      <input
+        type="text"
+        className="form-control"
+        id="dropLocation"
+        name="dropLocation"
+        ref={dropRef} // Attach ref for Google Places Autocomplete
+        value={formData.dropLocation || ""} // Use value instead of defaultValue
+        onChange={handleChange}
+      />
+      <button
+        type="button"
+        className="btn btn-outline-secondary"
+        onClick={() => {
+          setFormData((prevData) => ({
+            ...prevData,
+            dropLocation: "",
+          }));
+          // Re-initialize Google Places Autocomplete
+          if (dropRef.current) {
+            new window.google.maps.places.Autocomplete(dropRef.current, {
+              types: ["geocode"],
+              componentRestrictions: { country: "in" },
+            });
+          }
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>
 
                 {/* Date & Time Section */}
                 <h6 className="text-primary mb-3">Date & Time</h6>
@@ -291,6 +375,6 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
       </div>
     </div>
   );
-};
+};  
 
 export default ModifyBookingModal;

@@ -8,15 +8,14 @@ import Index from "./components/pages/index";
 import ShowUsers from "./components/pages/ShowUsers";
 import RegisterCab from "./components/pages/RegisterCab";
 import ShowRegisteredCabs from "./components/pages/ShowRegisteredCabs";
-import EditCab from "./components/pages/EditCab"; // Import the EditCab component
-import AdminRegistration from "./components/login/AdminRegistration";
+import EditCab from "./components/pages/EditCab";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ForgotPassword from "./components/login/ForgotPassword";
 import ProfileSettings from "./components/pages/ProfileSettings"; 
-import AccountSettings from "./components/pages/AccountSettings"; // Import the AccountSettings component
+import AccountSettings from "./components/pages/AccountSettings";
 import UserOffers from "./components/pages/UserOffers";
 import Notifications from "./components/pages/Notifications";
-import Bookings from "./components/pages/Bookings"; // Import the ShowAllBookings component
+import Bookings from "./components/pages/Bookings";
 
 
 function App() {
@@ -26,7 +25,6 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/register-admin" element={<ProtectedRoute><AdminRegistration /></ProtectedRoute>} />
         <Route path="/index" element={<ProtectedRoute><Index /></ProtectedRoute>} />
         <Route path="/users" element={<ProtectedRoute><ShowUsers /></ProtectedRoute>} />
         <Route path="/register-cab" element={<ProtectedRoute><RegisterCab /></ProtectedRoute>} /> 

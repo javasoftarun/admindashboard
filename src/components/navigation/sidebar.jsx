@@ -140,11 +140,6 @@ const Sidebar = () => {
                 <span>Settings</span>
               </Link>
               <ul className="collapse list-unstyled ps-3" id="settingsMenu">
-              <li>
-                  <Link to="/register-admin" className="nav-link text-white">
-                    <i className="fa fa-plus-circle me-2"></i> Create New Admin
-                  </Link>
-                </li>
                 <li>
                   <Link to="/profile-settings" className="nav-link text-white">
                     <i className="fa fa-user-circle me-2"></i> Profile Settings
@@ -290,11 +285,6 @@ const Sidebar = () => {
               className="collapse list-unstyled ps-3"
               id="settingsMenuDesktop"
             >
-              <li>
-                  <Link to="/register-admin" className="nav-link text-white">
-                    <i className="fa fa-plus-circle me-2"></i> Create New Admin
-                  </Link>
-                </li>
               <li>
                 <Link to="/profile-settings" className="nav-link text-white">
                   <i className="fa fa-user-circle me-2"></i> Profile Settings

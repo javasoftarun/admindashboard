@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import EditUserModal from "../pages/EditUserModal";
+import AddUserModal from "../modal/AddUserModal";
 import DeleteUserModal from "../pages/DeleteUserModal";
 import LoadingSpinner from "../spinner/LoadingSpinner";
 
@@ -12,8 +12,8 @@ const ShowUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -53,11 +53,6 @@ const ShowUsers = () => {
     setCurrentPage(1);
   };
 
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setShowEditModal(true);
-  };
-
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`https://userservice-a0nr.onrender.com/api/users/${id}`, {
@@ -81,6 +76,22 @@ const ShowUsers = () => {
     }
   };
 
+  const handleAddUser = (newUser) => {
+    const userWithCreatedAt = {
+      ...newUser,
+      createdAt: newUser.createdAt || new Date().toISOString(),
+    };
+  
+    console.log("User with createdAt:", userWithCreatedAt);
+  
+    setUsers((prevUsers) => [userWithCreatedAt, ...prevUsers]);
+    setFilteredUsers((prevUsers) => [userWithCreatedAt, ...prevUsers]);
+  
+    setCurrentPage(1);
+  
+    setShowAddUserModal(false);
+  };
+
   const getPaginatedUsers = () => {
     const startIndex = (currentPage - 1) * pageSize;
     return filteredUsers.slice(startIndex, startIndex + pageSize);
@@ -95,14 +106,25 @@ const ShowUsers = () => {
           <div className="col-12 col-md-6 mb-2 mb-md-0">
             <h1 className="text-primary">Users List</h1>
           </div>
-          <div className="col-12 col-md-6">
-            <input
-              type="text"
-              className="form-control w-100"
-              placeholder="Search by name, email, or phone"
-              value={searchQuery}
-              onChange={handleSearch}
-            />
+          <div className="col-12 col-md-6 d-flex justify-content-end">
+            <button
+              className="btn btn-success me-2"
+              onClick={() => setShowAddUserModal(true)} // Open Add User Modal
+            >
+              <i className="bi bi-person-plus me-2"></i> Add User
+            </button>
+            <div className="input-group w-50">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by name, email, or phone"
+                value={searchQuery}
+                onChange={handleSearch}
+              />
+              <span className="input-group-text bg-primary text-white">
+                <i className="bi bi-search"></i>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -133,14 +155,10 @@ const ShowUsers = () => {
                     <td>{user.phone}</td>
                     <td>{user.role}</td>
                     <td>{user.verified ? "Yes" : "No"}</td>
-                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                     <td>
-                      <i
-                        className="bi bi-pencil-square text-primary me-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleEdit(user)}
-                        title="Edit User"
-                      ></i>
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
+                    </td>
+                    <td>
                       <i
                         className="bi bi-trash text-danger"
                         style={{ cursor: "pointer" }}
@@ -173,9 +191,8 @@ const ShowUsers = () => {
             {[...Array(totalPages)].map((_, index) => (
               <button
                 key={index}
-                className={`btn btn-sm ${
-                  currentPage === index + 1 ? "btn-secondary" : "btn-outline-primary"
-                } me-1`}
+                className={`btn btn-sm ${currentPage === index + 1 ? "btn-secondary" : "btn-outline-primary"
+                  } me-1`}
                 onClick={() => setCurrentPage(index + 1)}
               >
                 {index + 1}
@@ -192,12 +209,11 @@ const ShowUsers = () => {
         </div>
       </div>
 
-      {/* Edit User Modal */}
-      <EditUserModal
-        showModal={showEditModal}
-        setShowModal={setShowEditModal}
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
+      {/* Add User Modal */}
+      <AddUserModal
+        show={showAddUserModal}
+        onHide={() => setShowAddUserModal(false)}
+        handleAddUser={handleAddUser}
       />
 
       {/* Delete User Modal */}

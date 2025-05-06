@@ -76,18 +76,21 @@ const Login = () => {
 
   return (
     <div
-      className="container-fluid d-flex justify-content-center align-items-center"
+      className="d-flex justify-content-center align-items-center"
       style={{
-        minHeight: "100vh", // Full height of the viewport
+        height: "100vh", // Full height of the viewport
+        width: "100vw", // Full width of the viewport
         backgroundColor: "#f8f9fa", // Light background
-        padding: "15px", // Add padding for smaller screens
+        margin: 0, // Remove any margin
       }}
     >
       <div
-        className="card shadow-lg border-0 w-100"
+        className="card shadow-lg border-0"
         style={{
-          maxWidth: "400px", // Limit the width for larger screens
-          borderRadius: "10px",
+          width: "100%", // Full width for mobile
+          maxWidth: "400px", // Limit width on larger screens
+          height: "auto", // Adjust height based on content
+          borderRadius: "10px", // Add slight border radius for better aesthetics
           overflow: "hidden",
         }}
       >
@@ -111,7 +114,7 @@ const Login = () => {
         </div>
 
         {/* Login Form */}
-        <div className="card-body">
+        <div className="card-body d-flex flex-column justify-content-center">
           <h4 className="text-center mb-4 text-dark">Login</h4>
           {errors.general && (
             <div className="alert alert-danger" role="alert">

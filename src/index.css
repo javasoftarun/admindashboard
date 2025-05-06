@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Ensure the Google Places Autocomplete dropdown is above the modal */
+.pac-container {
+  z-index: 1055 !important; /* Higher than the Bootstrap modal's z-index */
+}
