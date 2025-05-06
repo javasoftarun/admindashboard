@@ -168,7 +168,6 @@ const AddUserModal = ({ show, onHide, handleAddUser }) => {
                     <option value="" disabled>
                       Select Role
                     </option>
-                    <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="ADMIN">Admin</option>
                     <option value="CABOWNER">Cab Owner</option>
                     <option value="USER">User</option>
