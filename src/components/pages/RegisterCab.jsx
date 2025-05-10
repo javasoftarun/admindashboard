@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../layout/Layout";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const RegisterCab = () => {
   const [formData, setFormData] = useState({
@@ -142,7 +143,7 @@ const RegisterCab = () => {
       console.log("Compressed Base64 Image:", base64Image); // Log the Base64 string for debugging
 
       // Call API to upload the image
-      const response = await fetch("https://commonservice.onrender.com/api/common/uploadBase64Image", {
+      const response = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -284,19 +285,19 @@ const RegisterCab = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0; 
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      return; // Stop submission if validation fails
+      return; 
     }
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch("https://carbookingservice.onrender.com/api/cab/registration/register", {
+      const response = await fetch(API_ENDPOINTS.ADD_CAB, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

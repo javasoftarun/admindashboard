@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import CryptoJS from "crypto-js"; // Import crypto-js for SHA-1 encoding
+import CryptoJS from "crypto-js";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const AddUserModal = ({ show, onHide, handleAddUser }) => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ const AddUserModal = ({ show, onHide, handleAddUser }) => {
       }; 
 
       // Send the API request
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/register", {
+      const response = await fetch(API_ENDPOINTS.ADD_USER, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

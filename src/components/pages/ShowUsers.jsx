@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import AddUserModal from "../modal/AddUserModal";
 import DeleteUserModal from "../pages/DeleteUserModal";
 import LoadingSpinner from "../spinner/LoadingSpinner";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const ShowUsers = () => {
   const [users, setUsers] = useState([]);
@@ -18,7 +19,7 @@ const ShowUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://userservice-a0nr.onrender.com/api/users/all");
+        const response = await fetch(API_ENDPOINTS.GET_ALL_USERS);
         const data = await response.json();
 
         if (data.responseCode === 200 && data.responseMessage === "success") {
@@ -55,7 +56,7 @@ const ShowUsers = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://userservice-a0nr.onrender.com/api/users/${id}`, {
+      const response = await fetch(API_ENDPOINTS.DELETE_USER(id), {
         method: "DELETE",
       });
 

@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import LoadingSpinner from "../spinner/LoadingSpinner"; // Import the loading spinner component
 import DeleteCabModal from "../modal/DeleteCabModal"; // Import the delete modal component
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const ShowRegisteredCabs = () => {
   const navigate = useNavigate();
@@ -23,13 +24,13 @@ const ShowRegisteredCabs = () => {
   useEffect(() => {
     const fetchCabs = async () => {
       try {
-        const response = await fetch("https://carbookingservice.onrender.com/api/cab/registration/get/all");
+        const response = await fetch(API_ENDPOINTS.GET_ALL_CABS);
         if (!response.ok) {
           throw new Error("Failed to fetch cabs");
         }
         const data = await response.json();
-        setCabs(data.responseData); // Access the cabs from `responseData`
-        setVisibleCabs(data.responseData.slice(0, itemsPerPage)); // Load the first page
+        setCabs(data.responseData); 
+        setVisibleCabs(data.responseData.slice(0, itemsPerPage)); 
       } catch (err) {
         setError(err.message);
       } finally {
@@ -97,7 +98,7 @@ const ShowRegisteredCabs = () => {
     setDeleting(true);
     try {
       const response = await fetch(
-        `https://carbookingservice.onrender.com/api/cab/registration/delete/${selectedCab.registrationId}`,
+        API_ENDPOINTS.DELETE_CAB(selectedCab.registrationId),
         {
           method: "DELETE",
         }

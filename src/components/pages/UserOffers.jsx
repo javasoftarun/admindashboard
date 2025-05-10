@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "../layout/Layout";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const UserOffers = () => {
   const [offers, setOffers] = useState([]); // State to store offers
@@ -26,7 +27,7 @@ const UserOffers = () => {
     const fetchOffers = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("https://commonservice.onrender.com/api/common/offer/all");
+        const response = await axios.get(API_ENDPOINTS.ALL_OFFERS);
         setOffers(response.data);
         setLoading(false);
       } catch (error) {
@@ -61,7 +62,7 @@ const UserOffers = () => {
           promoEndDate: new Date(editOffer.promoEndDate).toISOString(),
         };
         await axios.put(
-          `https://commonservice.onrender.com/api/common/offer/update/${editOffer.id}`,
+          API_ENDPOINTS.UPDATE_OFFER(editOffer.id),
           updatedOffer
         );
         setOffers(
@@ -79,7 +80,7 @@ const UserOffers = () => {
           promoEndDate: new Date(newOffer.promoEndDate).toISOString(),
         };
         const response = await axios.post(
-          "https://commonservice.onrender.com/api/common/offer/create",
+          API_ENDPOINTS.ADD_OFFER,
           newOfferPayload
         );
         setOffers([...offers, response.data]);

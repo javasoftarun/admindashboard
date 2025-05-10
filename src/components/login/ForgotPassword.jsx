@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js"; // Import crypto-js for password encryption
+import API_ENDPOINTS from "../config/apiConfig";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1); // Step 1: Send OTP, Step 2: Verify OTP
@@ -20,7 +21,7 @@ const ForgotPassword = () => {
     setMessage("");
 
     try {
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/forgot-password", {
+      const response = await fetch(API_ENDPOINTS.FORGOT_PASSWORD, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain", // Set Content-Type to text/plain
@@ -64,7 +65,7 @@ const ForgotPassword = () => {
     const encryptedPassword = CryptoJS.SHA1(newPassword).toString();
 
     try {
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/reset-password", {
+      const response = await fetch(API_ENDPOINTS.RESET_PASSWORD, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

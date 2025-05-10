@@ -7,6 +7,7 @@ import CabDetailsModal from "../modal/CabDetailsModal";
 import ModifyBookingModal from "../modal/ModifyBookingModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -25,7 +26,7 @@ const Bookings = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("https://carbookingservice.onrender.com/api/cab/booking/find/all");
+        const response = await axios.get(API_ENDPOINTS.GET_ALL_BOOKINGS);
         if (response.data.responseCode === 200) {
           setBookings(response.data.responseData);
         } else {
@@ -55,8 +56,8 @@ const Bookings = () => {
   // Fetch user details by user ID
   const handleViewUserDetails = async (userId, bookingId) => {
     try {
-      updateLoadingState(bookingId, "loadingUser", true); // Start loading for this card
-      const response = await axios.get(`https://userservice-a0nr.onrender.com/api/users/${userId}`);
+      updateLoadingState(bookingId, "loadingUser", true); 
+      const response = await axios.get(API_ENDPOINTS.GET_USER_BY_ID(userId));
       if (response.data.responseCode === 200) {
         setUserDetails(response.data.responseData[0]);
         setShowUserModal(true);
@@ -74,7 +75,7 @@ const Bookings = () => {
   const handleViewCabDetails = async (cabRegistrationId, bookingId) => {
     try {
       updateLoadingState(bookingId, "loadingCab", true); // Start loading for this card
-      const response = await axios.get(`https://carbookingservice.onrender.com/api/cab/registration/get/${cabRegistrationId}`);
+      const response = await axios.get(API_ENDPOINTS.GET_CAB_BY_ID(cabRegistrationId));
       if (response.data.responseCode === 200) {
         setCabDetails(response.data.responseData[0]);
         setShowCabModal(true);

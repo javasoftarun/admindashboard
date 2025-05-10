@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "../layout/Layout";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const EditCab = () => {
   const navigate = useNavigate();
-  const { state } = useLocation(); // Access the passed state
-  const cabData = state?.cab; // Get the cab data from state
+  const { state } = useLocation(); 
+  const cabData = state?.cab; 
   const [suggestions, setSuggestions] = useState([]);
-  const [newImage, setNewImage] = useState(null);
-  const [message, setMessage] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [newImage] = useState(null);
+  const [ setMessage] = useState("");
+  const [ setImagePreview] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [modalMessage, setModalMessage] = useState(""); // Message to display in the modal
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [modalMessage, setModalMessage] = useState(""); 
+  const [isModalVisible, setIsModalVisible] = useState(false); 
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -147,7 +148,7 @@ const EditCab = () => {
       console.log("Compressed Base64 Image:", base64Image); // Log the Base64 string for debugging
 
       // Call API to upload the image
-      const response = await fetch("https://commonservice.onrender.com/api/common/uploadBase64Image", {
+      const response = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -337,13 +338,13 @@ const EditCab = () => {
       }
   
       const response = await fetch(
-        `https://carbookingservice.onrender.com/api/cab/registration/update/${formData.registrationId}`,
+        API_ENDPOINTS.UPDATE_CAB(formData.registrationId),
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), // No need to set Content-Type
+          body: JSON.stringify(formData), 
         }
       );
   

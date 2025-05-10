@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CryptoJS from "crypto-js";
 import { Link, useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://userservice-a0nr.onrender.com/api/users/login",
+        API_ENDPOINTS.LOGIN_API,
         {
           method: "POST",
           headers: {

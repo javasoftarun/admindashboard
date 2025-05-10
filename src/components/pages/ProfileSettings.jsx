@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../layout/Layout";
 import "bootstrap/dist/css/bootstrap.min.css";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const ProfileSettings = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +41,7 @@ const ProfileSettings = () => {
       reader.onload = () => {
         setFormData((prevFormData) => ({
           ...prevFormData,
-          imageUrl: reader.result, // Set the preview image as a Base64 string
+          imageUrl: reader.result,
         }));
       };
       reader.readAsDataURL(file);
@@ -48,7 +49,7 @@ const ProfileSettings = () => {
       try {
         const base64Image = await compressAndConvertToBase64(file);
 
-        const response = await fetch("https://commonservice.onrender.com/api/common/uploadBase64Image", {
+        const response = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -126,7 +127,7 @@ const ProfileSettings = () => {
     setMessage("");
 
     try {
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/update", {
+      const response = await fetch(API_ENDPOINTS.UPDATE_USER, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../layout/Layout";
 import SHA1 from "crypto-js/sha1";
+import API_ENDPOINTS from "../config/apiConfig";
 
 const AccountSettings = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ const AccountSettings = () => {
       };
 
       // Call API to update account settings
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/update/password", {
+      const response = await fetch(API_ENDPOINTS.UPDATE_PASSWORD, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +90,7 @@ const AccountSettings = () => {
 
     try {
       // Call API to delete the account
-      const response = await fetch("https://userservice-a0nr.onrender.com/api/users/delete-account", {
+      const response = await fetch(API_ENDPOINTS.DELETE_USER(localStorage.getItem("userId")), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

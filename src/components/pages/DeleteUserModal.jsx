@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 const DeleteUserModal = ({ showModal, setShowModal, handleDelete, selectedUser }) => {
-  const [message, setMessage] = useState(""); // State to track success or failure message
-  const [loading, setLoading] = useState(false); // State to track loading status
+  const [message, setMessage] = useState(""); 
+  const [loading, setLoading] = useState(false);
 
   const handleConfirmDelete = async () => {
-    setLoading(true); // Start loading
-    setMessage(""); // Clear any previous message
+    setLoading(true); 
+    setMessage("");
     const isDeleted = await handleDelete(selectedUser.id); // Call the delete function
     setLoading(false); // Stop loading
 
