@@ -22,6 +22,7 @@ const API_ENDPOINTS = {
   UPDATE_CAB: (id) => `${API_CABANDBOOKING_BASE_URL}/cab/registration/update/${id}`,
   GET_ALL_BOOKINGS: `${API_CABANDBOOKING_BASE_URL}/cab/booking/find/all`,
   UPDATE_BOOKING: (id) => `${API_CABANDBOOKING_BASE_URL}/cab/booking/update/${id}`,
+  UPDATE_BOOKING_STATUS: `${API_CABANDBOOKING_BASE_URL}/cab/booking/update-booking-status`,
  
   
 

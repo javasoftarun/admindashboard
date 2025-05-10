@@ -8,6 +8,7 @@ import ModifyBookingModal from "../modal/ModifyBookingModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import API_ENDPOINTS from "../config/apiConfig";
+import CancelBookingModal from "../modal/cancelBookingModal";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -20,6 +21,8 @@ const Bookings = () => {
   const [showCabModal, setShowCabModal] = useState(false);
   const [loadingStates, setLoadingStates] = useState({});
   const [showModifyModal, setShowModifyModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState(null);
 
   // Fetch bookings from the API
   useEffect(() => {
@@ -56,7 +59,7 @@ const Bookings = () => {
   // Fetch user details by user ID
   const handleViewUserDetails = async (userId, bookingId) => {
     try {
-      updateLoadingState(bookingId, "loadingUser", true); 
+      updateLoadingState(bookingId, "loadingUser", true);
       const response = await axios.get(API_ENDPOINTS.GET_USER_BY_ID(userId));
       if (response.data.responseCode === 200) {
         setUserDetails(response.data.responseData[0]);
@@ -100,9 +103,32 @@ const Bookings = () => {
     console.log("Modified Booking:", updatedBooking);
   };
 
-  const handleCancelBooking = (bookingId) => {
-    console.log(`Cancel booking with ID: ${bookingId}`);
-    // Add logic to cancel the booking
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      const payload = {
+        bookingId: bookingId,
+        bookingStatus: "Canceled",
+        paymentStatus: null,
+        role: localStorage.getItem("role"),
+      };
+  
+      const response = await axios.put(API_ENDPOINTS.UPDATE_BOOKING_STATUS, payload);
+  
+      if (response.data.responseCode === 200) {
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.bookingId === bookingId
+              ? { ...booking, bookingStatus: "Canceled" }
+              : booking
+          )
+        );
+        console.log(`Booking with ID ${bookingId} canceled successfully.`);
+      } else {
+        console.error("Failed to cancel booking:", response.data.responseMessage);
+      }
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+    }
   };
 
   return (
@@ -184,18 +210,27 @@ const Bookings = () => {
                       <button
                         className="btn btn-warning btn-sm text-dark"
                         onClick={() => {
-                            setSelectedBooking(booking);
-                            setShowModifyModal(true);
-                          }}
+                          setSelectedBooking(booking);
+                          setShowModifyModal(true);
+                        }}
+                        disabled={booking.bookingStatus === "Canceled" || booking.bookingStatus === "Completed"}
                       >
                         Modify Booking
                       </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleCancelBooking(booking.bookingId)}
-                      >
-                        Cancel Booking
-                      </button>
+                      {booking.bookingStatus === "Canceled" ? (
+                        <span className="text-danger fw-bold">Canceled</span>
+                      ) : (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            setBookingToCancel(booking.bookingId);
+                            setShowCancelModal(true);
+                          }}
+                          disabled={booking.bookingStatus === "Canceled" || booking.bookingStatus === "Completed"}
+                        >
+                          Cancel Booking
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -233,6 +268,16 @@ const Bookings = () => {
           onHide={() => setShowModifyModal(false)}
           booking={selectedBooking}
           onSave={handleSaveModifiedBooking}
+        />
+
+        <CancelBookingModal
+          show={showCancelModal}
+          onHide={() => setShowCancelModal(false)}
+          onConfirm={(bookingId) => {
+            handleCancelBooking(bookingId);
+            setShowCancelModal(false);
+          }}
+          bookingId={bookingToCancel}
         />
       </div>
     </Layout>
