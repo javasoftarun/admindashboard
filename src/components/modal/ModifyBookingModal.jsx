@@ -1,21 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import API_ENDPOINTS from "../config/apiConfig";
+import CabSelectModal from "../modal/CabSelectModal";
 
 const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [fareCalculating] = useState(false);
+  const [fareCalculated, setFareCalculated] = useState(false);
+  const [availableCabs, setAvailableCabs] = useState([]);
+  const [showCabSelectModal, setShowCabSelectModal] = useState(false);
+  const [cabLoading, setCabLoading] = useState(false);
 
   // Refs for Google Places Autocomplete
   const pickupRef = useRef(null);
   const dropRef = useRef(null);
   useEffect(() => {
-    if (booking) {
+    if (booking && show) {
       setFormData(booking);
+      setFareCalculated(false);
+      setShowCabSelectModal(false);
     }
-  }, [booking]);
+  }, [booking, show]);
 
   // Re-initialize autocomplete when the modal is opened
   useEffect(() => {
@@ -62,6 +70,49 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
     }));
   };
 
+  const handleCalculateFare = async () => {
+    setCabLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        pickupLocation: formData.pickupLocation,
+        dropLocation: formData.dropLocation,
+        pickupDateTime: formData.pickupDateTime,
+        dropDateTime: formData.dropDateTime,
+        radius: 15,
+      };
+      const response = await axios.post(API_ENDPOINTS.SEARCH_AVAILABLE_CABS, payload);
+      if (response.data.responseCode === 200 && Array.isArray(response.data.responseData)) {
+        setAvailableCabs(response.data.responseData);
+        setShowCabSelectModal(true);
+      } else {
+        setError(response.data.responseMessage || "No cabs found.");
+      }
+    } catch (err) {
+      setError("An error occurred while searching cabs.");
+    } finally {
+      setCabLoading(false);
+    }
+  };
+
+  const handleSelectCab = (cab) => {
+    // Ensure promoDiscount is 0 if null/undefined
+    const promoDiscount = cab.promoDiscount == null ? 0 : cab.promoDiscount;
+    const tokenAmount = cab.tokenAmount == null ? 0 : cab.tokenAmount;
+    const fare = cab.fare == null ? 0 : cab.fare;
+    // Calculate balanceAmount: fare - promoDiscount - tokenAmount
+    const balanceAmount = fare - promoDiscount - tokenAmount;
+
+    setFormData((prev) => ({
+      ...prev,
+      cabRegistrationId: cab.cabRegistrationId,
+      fare: fare,
+      balanceAmount: balanceAmount,
+    }));
+    setShowCabSelectModal(false);
+    setFareCalculated(true);
+  };
+
   const handleSave = async () => {
     setLoading(true);
     setError(null);
@@ -96,7 +147,6 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
       );
 
       if (response.data.responseCode === 200) {
-        setSuccess("Booking updated successfully!");
         onSave(formData);
 
       } else {
@@ -120,7 +170,7 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header bg-primary text-white">
-            <h5 className="modal-title">Modify Booking</h5>
+            <h5 className="modal-title">Modify Booking # {formData.bookingId}</h5>
             <button
               type="button"
               className="btn-close"
@@ -318,7 +368,7 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
                       className="form-control"
                       id="promoDiscount"
                       name="promoDiscount"
-                      value={formData.promoDiscount || ""}
+                      value={formData.promoDiscount == null ? 0 : formData.promoDiscount}
                       readOnly
                     />
                   </div>
@@ -344,7 +394,11 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
                       className="form-control"
                       id="balanceAmount"
                       name="balanceAmount"
-                      value={formData.balanceAmount || ""}
+                      value={
+                        (formData.fare || 0) -
+                        (formData.promoDiscount == null ? 0 : formData.promoDiscount) -
+                        (formData.tokenAmount == null ? 0 : formData.tokenAmount)
+                      }
                       readOnly
                     />
                   </div>
@@ -359,18 +413,41 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
               type="button"
               className="btn btn-secondary"
               onClick={onHide}
-              disabled={loading}
+              disabled={loading || fareCalculating}
             >
               Close
             </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSave}
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
+            {/* Calculate Fare Button */}
+            {!fareCalculated && (
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={handleCalculateFare}
+                disabled={cabLoading || loading}
+              >
+                {cabLoading ? "Calculating..." : "Calculate Fare"}
+              </button>
+            )}
+            {/* Save Changes Button */}
+            {fareCalculated && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSave}
+                disabled={loading || !formData.cabRegistrationId}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+            )}
+
+            <CabSelectModal
+              show={showCabSelectModal}
+              cabs={availableCabs}
+              loading={cabLoading}
+              onSelect={handleSelectCab}
+              onHide={() => setShowCabSelectModal(false)}
+              currentCabRegistrationId={formData.cabRegistrationId}
+            />
           </div>
         </div>
       </div>
