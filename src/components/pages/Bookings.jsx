@@ -211,6 +211,20 @@ const Bookings = () => {
     }
   };
 
+  function formatDateTime(dt) {
+    if (!dt) return "";
+    const date = new Date(dt);
+    if (isNaN(date)) return dt;
+    return date.toLocaleString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
+
   return (
     <Layout>
       <div className="container mt-4">
@@ -230,6 +244,7 @@ const Bookings = () => {
                     >
                       <option value="">All Status</option>
                       <option value="Pending">Pending</option>
+                      <option value="Accepted">Accepted</option>
                       <option value="Completed">Completed</option>
                       <option value="Canceled">Canceled</option>
                     </select>
@@ -365,16 +380,35 @@ const Bookings = () => {
                         </button>
                       </p>
                       <p className="mb-1">
-                        <strong>Pickup:</strong> {booking.pickupLocation}
+                        <strong>Pickup Date:</strong> {formatDateTime(booking.pickupDateTime)}
                       </p>
                       <p className="mb-1">
-                        <strong>Drop:</strong> {booking.dropLocation}
+                        <strong>Drop Date:</strong> {formatDateTime(booking.dropDateTime)}
                       </p>
                       <p className="mb-1">
                         <strong>Fare:</strong> ₹{booking.fare}
                       </p>
                       <p className="mb-1">
-                        <strong>Status:</strong> {booking.bookingStatus || "N/A"}
+                        <strong>Status:</strong>
+                        <span
+                          className="ms-2 fw-semibold"
+                          style={{
+                            fontSize: "0.88rem",
+                            textTransform: "uppercase",
+                            color:
+                              booking.bookingStatus === "Pending"
+                                ? "#ffc107"
+                                : booking.bookingStatus === "Accepted"
+                                  ? "#0dcaf0"
+                                  : booking.bookingStatus === "Completed"
+                                    ? "#198754"
+                                    : booking.bookingStatus === "Canceled"
+                                      ? "#dc3545"
+                                      : "#6c757d"
+                          }}
+                        >
+                          {booking.bookingStatus || "N/A"}
+                        </span>
                       </p>
                       <div className="d-flex justify-content-between mt-3">
                         <button

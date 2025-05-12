@@ -1,5 +1,5 @@
 const API_USER_BASE_URL = "https://userservice-zwy2.onrender.com/api";
-const API_CABANDBOOKING_BASE_URL = "https://carbookingservice-4ydj.onrender.com/api";
+const API_CABANDBOOKING_BASE_URL = "http://localhost:8082/api";
 const API_COMMONSERVICE_BASE_URL = "https://commonservice-wxam.onrender.com/api";
 
 const API_ENDPOINTS = {

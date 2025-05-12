@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const CabSelectModal = ({ show, cabs, onSelect, onHide, loading, currentCabRegistrationId }) => {
     // Move useState to the top!
     const [showAll, setShowAll] = useState(false);
+
+    useEffect(() => {
+        setShowAll(false);
+    }, [cabs]);
 
     if (!show) return null;
 
     // Filter out null/undefined cabs
     const validCabs = (cabs || []).filter(Boolean);
 
+    // Check if currentCabRegistrationId exists in the cabs list
+    const hasCurrentCab =
+        currentCabRegistrationId &&
+        validCabs.some(cab => cab.cabRegistrationId === currentCabRegistrationId);
+
     // Separate filtered and other cabs
-    const filteredCabs = currentCabRegistrationId
+    const filteredCabs = hasCurrentCab
         ? validCabs.filter(cab => cab.cabRegistrationId === currentCabRegistrationId)
-        : [];
-    const otherCabs = currentCabRegistrationId
+        : validCabs; // show all if not found
+
+    const otherCabs = hasCurrentCab
         ? validCabs.filter(cab => cab.cabRegistrationId !== currentCabRegistrationId)
-        : validCabs;
+        : []; // none if showing all
 
     // Combine filtered and (optionally) other cabs for display
     const displayCabs = showAll ? [...filteredCabs, ...otherCabs] : filteredCabs;

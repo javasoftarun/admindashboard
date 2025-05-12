@@ -60,13 +60,13 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
         }));
       });
     }
-  }, [show]); // Re-initialize when `show` changes
+  }, [show]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: (name === "pickupDateTime" || name === "dropDateTime") ? ensureSeconds(value) : value,
     }));
   };
 
@@ -100,7 +100,6 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
     const promoDiscount = cab.promoDiscount == null ? 0 : cab.promoDiscount;
     const tokenAmount = cab.tokenAmount == null ? 0 : cab.tokenAmount;
     const fare = cab.fare == null ? 0 : cab.fare;
-    // Calculate balanceAmount: fare - promoDiscount - tokenAmount
     const balanceAmount = fare - promoDiscount - tokenAmount;
 
     setFormData((prev) => ({
@@ -112,6 +111,15 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
     setShowCabSelectModal(false);
     setFareCalculated(true);
   };
+
+  function ensureSeconds(datetimeStr) {
+    if (!datetimeStr) return "";
+    // If already has seconds, return as is
+    if (datetimeStr.length === 19) return datetimeStr;
+    // If format is 'YYYY-MM-DDTHH:mm', add ':00'
+    if (datetimeStr.length === 16) return datetimeStr + ":00";
+    return datetimeStr;
+  }
 
   const handleSave = async () => {
     setLoading(true);
@@ -125,8 +133,8 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
         cabRegistrationId: formData.cabRegistrationId,
         pickupLocation: formData.pickupLocation,
         dropLocation: formData.dropLocation,
-        pickupDateTime: formData.pickupDateTime,
-        dropDateTime: formData.dropDateTime,
+        pickupDateTime: ensureSeconds(formData.pickupDateTime),
+        dropDateTime: ensureSeconds(formData.dropDateTime),
         fare: formData.fare,
         promoDiscount: formData.promoDiscount,
         tokenAmount: formData.tokenAmount,
@@ -250,8 +258,8 @@ const ModifyBookingModal = ({ show, onHide, booking, onSave }) => {
                         className="form-control"
                         id="pickupLocation"
                         name="pickupLocation"
-                        ref={pickupRef} // Attach ref for Google Places Autocomplete
-                        value={formData.pickupLocation || ""} // Use value instead of defaultValue
+                        ref={pickupRef} 
+                        value={formData.pickupLocation || ""} 
                         onChange={handleChange}
                       />
                       <button
