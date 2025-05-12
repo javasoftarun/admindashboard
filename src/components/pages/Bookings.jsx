@@ -260,20 +260,28 @@ const Bookings = () => {
                       onChange={e => setDateFilter(e.target.value)}
                     />
                   </div>
+
                   <div className="col-md-2">
-                    <label className="form-label fw-semibold mb-1">Sort By</label>
+                    <label className="form-label fw-semibold mb-1">
+                      <i className="bi bi-sort-alpha-down me-2 text-primary"></i>Sort By
+                    </label>
                     <select
                       className="form-select"
                       value={sortField}
                       onChange={e => setSortField(e.target.value)}
                     >
                       <option value="pickupDateTime">Pickup Date</option>
-                      <option value="fare">Fare</option>
+                      <option value="updatedAt">Update Date</option>
+                      <option value="insertedAt">Booking Date</option>
                       <option value="bookingId">Booking ID</option>
+                      <option value="userId">User ID</option>
+                      <option value="cabRegistrationId">Cab ID</option>
                     </select>
                   </div>
                   <div className="col-md-2">
-                    <label className="form-label fw-semibold mb-1">Order</label>
+                    <label className="form-label fw-semibold mb-1">
+                      <i className="bi bi-arrow-down-up me-2 text-primary"></i>Order
+                    </label>
                     <select
                       className="form-select"
                       value={sortOrder}
@@ -318,8 +326,13 @@ const Bookings = () => {
               .sort((a, b) => {
                 let aValue = a[sortField];
                 let bValue = b[sortField];
-                // For date, convert to Date object
-                if (sortField === "pickupDateTime") {
+                // Handle date fields
+                if (
+                  sortField === "pickupDateTime" ||
+                  sortField === "bookingDate" ||
+                  sortField === "insertedAt" ||
+                  sortField === "updatedAt"
+                ) {
                   aValue = new Date(aValue);
                   bValue = new Date(bValue);
                 }
@@ -331,7 +344,7 @@ const Bookings = () => {
                 <div key={booking.bookingId} className="col-lg-4 col-md-6 mb-4">
                   <div className="card border-0 shadow-sm">
                     <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                      <h6 className="mb-0">Booking ID: {booking.bookingId}</h6>
+                      <h6 className="mb-0">Booking ID: {booking.bookingId} ({formatDateTime(booking.insertedAt)})</h6>
                       <button
                         className="btn btn-sm btn-dark"
                         onClick={() => {
@@ -389,6 +402,9 @@ const Bookings = () => {
                         <strong>Fare:</strong> ₹{booking.fare}
                       </p>
                       <p className="mb-1">
+                        <strong>Last Updated:</strong> {formatDateTime(booking.updatedAt)}
+                      </p>
+                      <p className="mb-1">
                         <strong>Status:</strong>
                         <span
                           className="ms-2 fw-semibold"
@@ -423,10 +439,11 @@ const Bookings = () => {
                         </button>
                         {booking.bookingStatus === "Canceled" && booking.bookingStatusUpdatedBy !== "USER" ? (
                           <button
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-outline-primary btn-sm fw-bold px-3"
+                            style={{ letterSpacing: "0.5px", borderWidth: 2 }}
                             onClick={() => handleShowAssignCabModal(booking)}
                           >
-                            Assign New Cab
+                            <i className="bi bi-truck me-1"></i> Assign New Cab
                           </button>
                         ) : (
                           <button

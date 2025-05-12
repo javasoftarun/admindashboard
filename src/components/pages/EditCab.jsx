@@ -5,16 +5,16 @@ import API_ENDPOINTS from "../config/apiConfig";
 
 const EditCab = () => {
   const navigate = useNavigate();
-  const { state } = useLocation(); 
-  const cabData = state?.cab; 
+  const { state } = useLocation();
+  const cabData = state?.cab;
   const [suggestions, setSuggestions] = useState([]);
   const [newImage] = useState(null);
-  const [ setMessage] = useState("");
-  const [ setImagePreview] = useState(null);
+  const [setMessage] = useState("");
+  const [setImagePreview] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [modalMessage, setModalMessage] = useState(""); 
-  const [isModalVisible, setIsModalVisible] = useState(false); 
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -166,10 +166,9 @@ const EditCab = () => {
       const data = await response.json();
 
       if (data.responseCode === 200) {
-        const imageUrl = data.responseData; // Extract imageUrl from responseData
-        console.log("Image URL:", imageUrl); // Log the image URL for debugging
+        const imageUrl = data.responseData;
+        console.log("Image URL:", imageUrl);
 
-        // Update the cabImageUrl field in formData
         setFormData((prev) => ({
           ...prev,
           cab: { ...prev.cab, cabImageUrl: imageUrl },
@@ -302,13 +301,13 @@ const EditCab = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       return; // Stop submission if validation fails
     }
-  
+
     setLoading(true); // Set loading to true at the start
-  
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("registrationId", formData.registrationId);
@@ -332,11 +331,11 @@ const EditCab = () => {
       formDataToSend.append("cabCapacity", formData.cab.cabCapacity);
       formDataToSend.append("cabCity", formData.cab.cabCity);
       formDataToSend.append("cabState", formData.cab.cabState);
-  
+
       if (formData.cab.cabImageUrl instanceof File) {
         formDataToSend.append("cabImage", formData.cab.cabImageUrl);
       }
-  
+
       const response = await fetch(
         API_ENDPOINTS.UPDATE_CAB(formData.registrationId),
         {
@@ -344,12 +343,12 @@ const EditCab = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), 
+          body: JSON.stringify(formData),
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (response.ok && data.responseCode === 200) {
         setModalMessage("Cab updated successfully!");
         setIsModalVisible(true); // Show success modal
@@ -368,20 +367,46 @@ const EditCab = () => {
 
   return (
     <Layout>
-      <div className="container mt-4">
-        <h1 className="mb-4">Edit Cab Details</h1>
+      <div
+        className="container mt-4"
+        style={{
+          background: "#fff",
+          borderRadius: 16,
+          boxShadow: "0 4px 32px rgba(33,37,41,0.09)",
+          border: "1.5px solid #e9ecef",
+          padding: "32px 24px 32px 24px",
+          maxWidth: "90%",
+        }}
+      >
+        <h1
+          className="mb-4 d-flex align-items-center"
+          style={{
+            color: "#212529",
+            fontWeight: 700,
+            letterSpacing: 1,
+            borderRadius: 12,
+            padding: "18px 0 18px 0",
+            borderBottom: "2px solid #ffc107",
+            background: "#f8f9fa",
+            fontSize: 28,
+          }}
+        >
+          <i className="bi bi-pencil-square me-3" style={{ color: "#ffc107", fontSize: 32 }}></i>
+          Edit Cab Details
+        </h1>
         <form onSubmit={handleSubmit}>
           {/* Owner and Driver Details */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <i className="bi bi-person-fill me-2"></i> Owner and Driver Details
+          <div className="card mb-4 shadow-sm border-0">
+            <div className="card-header bg-white border-bottom-0 pb-0">
+              <h5 className="mb-0 text-dark fw-bold d-flex align-items-center">
+                <i className="bi bi-person-fill me-2" style={{ color: "#ffc107" }}></i>
+                Owner & Driver
               </h5>
             </div>
-            <div className="card-body">
+            <div className="card-body" style={{ background: "#f8f9fa", borderRadius: 12 }}>
               <div className="row">
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="ownerName" className="form-label">
+                  <label htmlFor="ownerName" className="form-label fw-semibold">
                     Owner Name
                   </label>
                   <input
@@ -396,7 +421,7 @@ const EditCab = () => {
                   {errors.ownerName && <div className="invalid-feedback">{errors.ownerName}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="driverName" className="form-label">
+                  <label htmlFor="driverName" className="form-label fw-semibold">
                     Driver Name
                   </label>
                   <input
@@ -411,7 +436,7 @@ const EditCab = () => {
                   {errors.driverName && <div className="invalid-feedback">{errors.driverName}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="driverContact" className="form-label">
+                  <label htmlFor="driverContact" className="form-label fw-semibold">
                     Driver Contact
                   </label>
                   <input
@@ -426,7 +451,7 @@ const EditCab = () => {
                   {errors.driverContact && <div className="invalid-feedback">{errors.driverContact}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="driverLicense" className="form-label">
+                  <label htmlFor="driverLicense" className="form-label fw-semibold">
                     Driver License
                   </label>
                   <input
@@ -441,7 +466,7 @@ const EditCab = () => {
                   {errors.driverLicense && <div className="invalid-feedback">{errors.driverLicense}</div>}
                 </div>
                 <div className="col-md-12 mb-3">
-                  <label htmlFor="address" className="form-label">
+                  <label htmlFor="address" className="form-label fw-semibold">
                     Address
                   </label>
                   <input
@@ -474,16 +499,17 @@ const EditCab = () => {
           </div>
 
           {/* Cab Details */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <i className="bi bi-car-front-fill me-2"></i> Cab Details
+          <div className="card mb-4 shadow-sm border-0">
+            <div className="card-header bg-white border-bottom-0 pb-0">
+              <h5 className="mb-0 text-dark fw-bold d-flex align-items-center">
+                <i className="bi bi-car-front-fill me-2" style={{ color: "#ffc107" }}></i>
+                Cab Details
               </h5>
             </div>
-            <div className="card-body">
+            <div className="card-body" style={{ background: "#f8f9fa", borderRadius: 12 }}>
               <div className="row">
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabName" className="form-label">
+                  <label htmlFor="cab.cabName" className="form-label fw-semibold">
                     Cab Name
                   </label>
                   <input
@@ -498,7 +524,7 @@ const EditCab = () => {
                   {errors.cabName && <div className="invalid-feedback">{errors.cabName}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabNumber" className="form-label">
+                  <label htmlFor="cab.cabNumber" className="form-label fw-semibold">
                     Cab Number
                   </label>
                   <input
@@ -513,7 +539,7 @@ const EditCab = () => {
                   {errors.cabNumber && <div className="invalid-feedback">{errors.cabNumber}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabType" className="form-label">
+                  <label htmlFor="cab.cabType" className="form-label fw-semibold">
                     Cab Type
                   </label>
                   <input
@@ -528,7 +554,7 @@ const EditCab = () => {
                   {errors.cabType && <div className="invalid-feedback">{errors.cabType}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabModel" className="form-label">
+                  <label htmlFor="cab.cabModel" className="form-label fw-semibold">
                     Cab Model
                   </label>
                   <input
@@ -543,7 +569,7 @@ const EditCab = () => {
                   {errors.cabModel && <div className="invalid-feedback">{errors.cabModel}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabColor" className="form-label">
+                  <label htmlFor="cab.cabColor" className="form-label fw-semibold">
                     Cab Color
                   </label>
                   <input
@@ -558,7 +584,7 @@ const EditCab = () => {
                   {errors.cabColor && <div className="invalid-feedback">{errors.cabColor}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabCapacity" className="form-label">
+                  <label htmlFor="cab.cabCapacity" className="form-label fw-semibold">
                     Cab Capacity
                   </label>
                   <input
@@ -573,7 +599,7 @@ const EditCab = () => {
                   {errors.cabCapacity && <div className="invalid-feedback">{errors.cabCapacity}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabState" className="form-label">
+                  <label htmlFor="cab.cabState" className="form-label fw-semibold">
                     Cab State
                   </label>
                   <input
@@ -588,7 +614,7 @@ const EditCab = () => {
                   {errors.cabState && <div className="invalid-feedback">{errors.cabState}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabCity" className="form-label">
+                  <label htmlFor="cab.cabCity" className="form-label fw-semibold">
                     Cab city
                   </label>
                   <input
@@ -603,7 +629,7 @@ const EditCab = () => {
                   {errors.cabCity && <div className="invalid-feedback">{errors.cabCity}</div>}
                 </div>
                 <div className="col-md-12 mb-3">
-                  <label htmlFor="cabImage" className="form-label">
+                  <label htmlFor="cabImage" className="form-label fw-semibold">
                     Cab Image
                   </label>
                   <div className="mb-3">
@@ -639,16 +665,17 @@ const EditCab = () => {
           </div>
 
           {/* Additional Details */}
-          <div className="card mb-4 shadow-sm">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <i className="bi bi-info-circle-fill me-2"></i> Additional Details
+          <div className="card mb-4 shadow-sm border-0">
+            <div className="card-header bg-white border-bottom-0 pb-0">
+              <h5 className="mb-0 text-dark fw-bold d-flex align-items-center">
+                <i className="bi bi-info-circle-fill me-2" style={{ color: "#ffc107" }}></i>
+                Additional Details
               </h5>
             </div>
-            <div className="card-body">
+            <div className="card-body" style={{ background: "#f8f9fa", borderRadius: 12 }}>
               <div className="row">
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="perKmRate" className="form-label">
+                  <label htmlFor="perKmRate" className="form-label fw-semibold">
                     Per Km Rate
                   </label>
                   <input
@@ -663,7 +690,7 @@ const EditCab = () => {
                   {errors.perKmRate && <div className="invalid-feedback">{errors.perKmRate}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="baseFare" className="form-label">
+                  <label htmlFor="baseFare" className="form-label fw-semibold">
                     Base Fare
                   </label>
                   <input
@@ -678,7 +705,7 @@ const EditCab = () => {
                   {errors.baseFare && <div className="invalid-feedback">{errors.baseFare}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="status" className="form-label">
+                  <label htmlFor="status" className="form-label fw-semibold">
                     Status
                   </label>
                   <select
@@ -687,7 +714,6 @@ const EditCab = () => {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-
                   >
                     {errors.status && <div className="invalid-feedback">{errors.status}</div>}
                     <option value="Active">Active</option>
@@ -698,8 +724,8 @@ const EditCab = () => {
             </div>
           </div>
 
-          <div className="d-flex justify-content-end">
-            <button type="submit" className="btn btn-primary me-2" disabled={loading}>
+          <div className="d-flex justify-content-end gap-2">
+            <button type="submit" className="btn btn-warning text-dark fw-bold" disabled={loading}>
               {loading ? (
                 <span
                   className="spinner-border spinner-border-sm"
@@ -712,9 +738,9 @@ const EditCab = () => {
             </button>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-outline-secondary px-4"
               onClick={() => navigate("/show-cabs")}
-              disabled={loading} // Disable cancel button while loading
+              disabled={loading}
             >
               Cancel
             </button>
@@ -741,7 +767,7 @@ const EditCab = () => {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-warning text-dark fw-bold"
                   onClick={() => {
                     setIsModalVisible(false);
                     if (modalMessage === "Cab updated successfully!") {

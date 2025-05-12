@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../layout/Layout";
-import LoadingSpinner from "../spinner/LoadingSpinner"; // Import the loading spinner component
-import DeleteCabModal from "../modal/DeleteCabModal"; // Import the delete modal component
+import LoadingSpinner from "../spinner/LoadingSpinner";
+import DeleteCabModal from "../modal/DeleteCabModal";
 import { useNavigate } from "react-router-dom";
 import API_ENDPOINTS from "../config/apiConfig";
+import ViewCabDetailsModal from "../modal/ViewCabDetailsModal";
 
 const ShowRegisteredCabs = () => {
   const navigate = useNavigate();
-  const [cabs, setCabs] = useState([]); // State to store all registered cabs
-  const [visibleCabs, setVisibleCabs] = useState([]); // State to store currently visible cabs
-  const [searchTerm, setSearchTerm] = useState(""); // State for search input
-  const [loading, setLoading] = useState(true); // State to show loading indicator
-  const [error, setError] = useState(null); // State to handle errors
-  const [page, setPage] = useState(1); // Current page for pagination
-  const itemsPerPage = 4; // Number of items to load per page
-  const [imageLoading, setImageLoading] = useState({}); // State to track image loading
-  const [selectedCab, setSelectedCab] = useState(null); // State to store the selected cab for deletion
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State to control the visibility of the delete modal
-  const [deleting, setDeleting] = useState(false); // State to track delete operation progress
-  const [modalMessage, setModalMessage] = useState(null); // State to store success or error message
+  const [cabs, setCabs] = useState([]);
+  const [visibleCabs, setVisibleCabs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 8;
+  const [imageLoading, setImageLoading] = useState({});
+  const [selectedCab, setSelectedCab] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [modalMessage, setModalMessage] = useState(null);
+  const [showCabModal, setShowCabModal] = useState(false);
+  const [cabDetails, setCabDetails] = useState(null);
 
   // Fetch all registered cabs
   useEffect(() => {
@@ -29,8 +32,8 @@ const ShowRegisteredCabs = () => {
           throw new Error("Failed to fetch cabs");
         }
         const data = await response.json();
-        setCabs(data.responseData); 
-        setVisibleCabs(data.responseData.slice(0, itemsPerPage)); 
+        setCabs(data.responseData);
+        setVisibleCabs(data.responseData.slice(0, itemsPerPage));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -54,7 +57,7 @@ const ShowRegisteredCabs = () => {
       cab.cab.cabNumber.toLowerCase().includes(value) ||
       cab.cab.cabType.toLowerCase().includes(value)
     );
-    setVisibleCabs(filtered.slice(0, page * itemsPerPage)); // Reset visible cabs based on search
+    setVisibleCabs(filtered.slice(0, page * itemsPerPage));
   };
 
   // Load more cabs when scrolling
@@ -84,13 +87,13 @@ const ShowRegisteredCabs = () => {
 
   // Define the action handlers
   const handleEdit = (cab) => {
-    navigate(`/edit-cab/${cab.registrationId}`, { state: { cab } }); // Pass cab data via state
+    navigate(`/edit-cab/${cab.registrationId}`, { state: { cab } });
   };
 
   const handleDelete = (cab) => {
     setSelectedCab(cab);
     setShowDeleteModal(true);
-    setModalMessage(null); // Clear any previous message
+    setModalMessage(null);
   };
 
   // Handle delete confirmation
@@ -123,46 +126,35 @@ const ShowRegisteredCabs = () => {
     }
   };
 
-  const handleActivate = (cabId) => {
-    alert(`Activate cab with ID: ${cabId}`);
-    // Add your activate logic here
-  };
-
-  const handleDeactivate = (cabId) => {
-    alert(`Deactivate cab with ID: ${cabId}`);
-    // Add your deactivate logic here
-  };
-
   return (
     <Layout>
       <div
         className="container mt-4 overflow-auto position-relative"
-        style={{ maxHeight: "80vh" }}
-        onScroll={handleScroll} // Attach scroll event
+        onScroll={handleScroll}
       >
-        <h1 className="mb-4">Registered Cabs</h1>
+        <h1 className="mb-4" style={{ color: "#ffc107", fontWeight: 700, letterSpacing: 1 }}>
+          <i className="bi bi-truck me-2" style={{ color: "#ffc107" }}></i>
+          Registered Cabs
+        </h1>
 
         {/* Search Bar */}
         <div className="input-group mb-4">
           <input
             type="text"
-            className="form-control border-dark" // Added border-dark for black border
+            className="form-control border-warning"
             placeholder="Search by cab name, owner, driver, cab number, or type..."
             value={searchTerm}
             onChange={handleSearch}
           />
-          <span className="input-group-text border-dark"> {/* Added border-dark for black border */}
-            <i className="bi bi-search"></i> {/* Bootstrap search icon */}
+          <span className="input-group-text border-warning bg-warning text-dark">
+            <i className="bi bi-search"></i>
           </span>
         </div>
 
-        {/* Loading Spinner Below the Search Box */}
         {loading && <LoadingSpinner />}
 
-        {/* Show error message */}
         {error && <p className="text-danger">{error}</p>}
 
-        {/* Show cabs in a card layout */}
         {!loading && !error && visibleCabs.length > 0 && (
           <div className="row">
             {visibleCabs.map((cab, index) => (
@@ -180,7 +172,12 @@ const ShowRegisteredCabs = () => {
                       src={cab.cab.cabImageUrl}
                       className="card-img-top"
                       alt="Cab"
-                      style={{ height: "200px", objectFit: "cover" }}
+                      style={{
+                        height: "200px",
+                        objectFit: "cover",
+                        borderTopLeftRadius: "calc(0.375rem - 1px)",
+                        borderTopRightRadius: "calc(0.375rem - 1px)",
+                      }}
                       onLoad={() => handleImageLoad(cab.registrationId)}
                       onError={() => handleImageError(cab.registrationId)}
                       onLoadStart={() =>
@@ -189,55 +186,54 @@ const ShowRegisteredCabs = () => {
                     />
                   </div>
                   <div className="card-body flex-grow-1">
-                    <h5 className="card-title">{cab.cab.cabName}</h5>
+                    <h5 className="card-title" style={{ color: "#ffc107", fontWeight: 600 }}>
+                      {cab.cab.cabName} <span style={{ color: "#212529" }}># {cab.registrationId}</span>
+                    </h5>
                     <p className="card-text">
-                      <strong>Registration ID:</strong> {cab.registrationId} <br />
                       <strong>Owner:</strong> {cab.ownerName} <br />
-                      <strong>Driver:</strong> {cab.driverName} <br />
                       <strong>Contact:</strong> {cab.driverContact} <br />
-                      <strong>License:</strong> {cab.driverLicense} <br />
                       <strong>Address:</strong> {cab.address} <br />
-                      <strong>Type:</strong> {cab.cab.cabType} <br />
-                      <strong>Number:</strong> {cab.cab.cabNumber} <br />
-                      <strong>Model:</strong> {cab.cab.cabModel} <br />
-                      <strong>Color:</strong> {cab.cab.cabColor} <br />
-                      <strong>Capacity:</strong> {cab.cab.cabCapacity} <br />
-                      <strong>Insurance:</strong> {cab.cab.cabInsurance} <br />
-                      <strong>City:</strong> {cab.cab.cabCity} <br />
-                      <strong>State:</strong> {cab.cab.cabState} <br />
-                      <strong>Per Km Rate:</strong> ₹{cab.perKmRate} <br />
-                      <strong>Base Fare:</strong> ₹{cab.baseFare} <br />
-                      <strong>Status:</strong> {cab.status}
+                      <strong>Status:</strong>{" "}
+                      <span
+                        className={
+                          "badge px-2 py-1 " +
+                          (cab.status === "Active"
+                            ? "bg-success"
+                            : cab.status === "Inactive"
+                              ? "bg-secondary"
+                              : "bg-warning text-dark")
+                        }
+                      >
+                        {cab.status}
+                      </span>
                     </p>
                   </div>
-                  <div className="card-footer d-flex justify-content-between">
+                  <div className="card-footer d-flex justify-content-end gap-2">
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-outline-warning btn-sm d-flex align-items-center"
+                      title="View Details"
+                      onClick={() => {
+                        setCabDetails(cab);
+                        setShowCabModal(true);
+                      }}
+                      style={{ fontWeight: 500, borderColor: "#ffc107" }}
+                    >
+                      <i className="bi bi-eye me-1"></i> View
+                    </button>
+                    <button
+                      className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                      title="Edit Cab"
                       onClick={() => handleEdit(cab)}
                     >
-                      Edit
+                      <i className="bi bi-pencil-square me-1"></i> Edit
                     </button>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-outline-danger btn-sm d-flex align-items-center"
+                      title="Delete Cab"
                       onClick={() => handleDelete(cab)}
                     >
-                      Delete
+                      <i className="bi bi-trash me-1"></i> Delete
                     </button>
-                    {cab.status === "Active" ? (
-                      <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => handleDeactivate(cab.registrationId)}
-                      >
-                        Deactivate
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-success btn-sm"
-                        onClick={() => handleActivate(cab.registrationId)}
-                      >
-                        Activate
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
@@ -245,7 +241,6 @@ const ShowRegisteredCabs = () => {
           </div>
         )}
 
-        {/* Show message if no cabs match the search */}
         {!loading && !error && visibleCabs.length === 0 && (
           <p>No cabs match your search.</p>
         )}
@@ -257,7 +252,12 @@ const ShowRegisteredCabs = () => {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setShowDeleteModal(false)}
         deleting={deleting}
-        message={modalMessage} // Pass the message to the modal
+        message={modalMessage}
+      />
+      <ViewCabDetailsModal
+        show={showCabModal}
+        onHide={() => setShowCabModal(false)}
+        cab={cabDetails}
       />
     </Layout>
   );
