@@ -5,6 +5,7 @@ import DeleteCabModal from "../modal/DeleteCabModal";
 import { useNavigate } from "react-router-dom";
 import API_ENDPOINTS from "../config/apiConfig";
 import ViewCabDetailsModal from "../modal/ViewCabDetailsModal";
+import CabBookingsModal from "../modal/CabBookingsModal";
 
 const ShowRegisteredCabs = () => {
   const navigate = useNavigate();
@@ -22,6 +23,10 @@ const ShowRegisteredCabs = () => {
   const [modalMessage, setModalMessage] = useState(null);
   const [showCabModal, setShowCabModal] = useState(false);
   const [cabDetails, setCabDetails] = useState(null);
+  const [showBookingsModal, setShowBookingsModal] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingsError, setBookingsError] = useState(null);
 
   // Fetch all registered cabs
   useEffect(() => {
@@ -126,6 +131,33 @@ const ShowRegisteredCabs = () => {
     }
   };
 
+  const handleShowBookings = async (cab) => {
+  setShowBookingsModal(true);
+  setBookings([]);
+  setBookingsLoading(true);
+  setBookingsError(null);
+  try {
+    const response = await fetch(API_ENDPOINTS.GET_BOOKINGS_BY_CAB_REG_ID(cab.registrationId));
+    if (!response.ok) throw new Error("Failed to fetch bookings");
+    const data = await response.json();
+    // Flatten the array if needed
+    let bookingsArr = [];
+    if (Array.isArray(data.responseData)) {
+      // If first element is an array, flatten
+      if (Array.isArray(data.responseData[0])) {
+        bookingsArr = data.responseData.flat();
+      } else {
+        bookingsArr = data.responseData;
+      }
+    }
+    setBookings(bookingsArr);
+  } catch (err) {
+    setBookingsError(err.message);
+  } finally {
+    setBookingsLoading(false);
+  }
+};
+
   return (
     <Layout>
       <div
@@ -208,27 +240,37 @@ const ShowRegisteredCabs = () => {
                       </span>
                     </p>
                   </div>
-                  <div className="card-footer d-flex justify-content-end gap-2">
+                  <div className="card-footer d-flex justify-content-end gap-1 mt-auto bg-white border-0 py-2 px-1">
                     <button
-                      className="btn btn-outline-warning btn-sm d-flex align-items-center"
+                      className="btn btn-outline-warning btn-xs d-flex align-items-center px-2 py-1"
+                      style={{ fontSize: "0.85rem", fontWeight: 500, borderColor: "#ffc107" }}
                       title="View Details"
                       onClick={() => {
                         setCabDetails(cab);
                         setShowCabModal(true);
                       }}
-                      style={{ fontWeight: 500, borderColor: "#ffc107" }}
                     >
                       <i className="bi bi-eye me-1"></i> View
                     </button>
                     <button
-                      className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                      className="btn btn-outline-dark btn-xs d-flex align-items-center px-2 py-1"
+                      style={{ fontSize: "0.85rem" }}
+                      title="View Bookings"
+                      onClick={() => handleShowBookings(cab)}
+                    >
+                      <i className="bi bi-calendar-check me-1"></i> Bookings
+                    </button>
+                    <button
+                      className="btn btn-outline-primary btn-xs d-flex align-items-center px-2 py-1"
+                      style={{ fontSize: "0.85rem" }}
                       title="Edit Cab"
                       onClick={() => handleEdit(cab)}
                     >
                       <i className="bi bi-pencil-square me-1"></i> Edit
                     </button>
                     <button
-                      className="btn btn-outline-danger btn-sm d-flex align-items-center"
+                      className="btn btn-outline-danger btn-xs d-flex align-items-center px-2 py-1"
+                      style={{ fontSize: "0.85rem" }}
                       title="Delete Cab"
                       onClick={() => handleDelete(cab)}
                     >
@@ -258,6 +300,13 @@ const ShowRegisteredCabs = () => {
         show={showCabModal}
         onHide={() => setShowCabModal(false)}
         cab={cabDetails}
+      />
+      <CabBookingsModal
+        show={showBookingsModal}
+        onHide={() => setShowBookingsModal(false)}
+        bookings={bookings}
+        loading={bookingsLoading}
+        error={bookingsError}
       />
     </Layout>
   );
