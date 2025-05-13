@@ -132,31 +132,31 @@ const ShowRegisteredCabs = () => {
   };
 
   const handleShowBookings = async (cab) => {
-  setShowBookingsModal(true);
-  setBookings([]);
-  setBookingsLoading(true);
-  setBookingsError(null);
-  try {
-    const response = await fetch(API_ENDPOINTS.GET_BOOKINGS_BY_CAB_REG_ID(cab.registrationId));
-    if (!response.ok) throw new Error("Failed to fetch bookings");
-    const data = await response.json();
-    // Flatten the array if needed
-    let bookingsArr = [];
-    if (Array.isArray(data.responseData)) {
-      // If first element is an array, flatten
-      if (Array.isArray(data.responseData[0])) {
-        bookingsArr = data.responseData.flat();
-      } else {
-        bookingsArr = data.responseData;
+    setShowBookingsModal(true);
+    setBookings([]);
+    setBookingsLoading(true);
+    setBookingsError(null);
+    try {
+      const response = await fetch(API_ENDPOINTS.GET_BOOKINGS_BY_CAB_REG_ID(cab.registrationId));
+      if (!response.ok) throw new Error("Failed to fetch bookings");
+      const data = await response.json();
+      // Flatten the array if needed
+      let bookingsArr = [];
+      if (Array.isArray(data.responseData)) {
+        // If first element is an array, flatten
+        if (Array.isArray(data.responseData[0])) {
+          bookingsArr = data.responseData.flat();
+        } else {
+          bookingsArr = data.responseData;
+        }
       }
+      setBookings(bookingsArr);
+    } catch (err) {
+      setBookingsError(err.message);
+    } finally {
+      setBookingsLoading(false);
     }
-    setBookings(bookingsArr);
-  } catch (err) {
-    setBookingsError(err.message);
-  } finally {
-    setBookingsLoading(false);
-  }
-};
+  };
 
   return (
     <Layout>
