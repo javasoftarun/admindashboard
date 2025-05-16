@@ -25,7 +25,7 @@ const API_ENDPOINTS = {
   UPDATE_BOOKING_STATUS: `${API_CABANDBOOKING_BASE_URL}/cab/booking/update-booking-status`,
   SEARCH_AVAILABLE_CABS: `${API_CABANDBOOKING_BASE_URL}/cab/registration/search`,
   GET_BOOKINGS_BY_CAB_REG_ID: (id) => `${API_CABANDBOOKING_BASE_URL}/cab/booking/get-by-cabregistrationid/${id}`,
-  
+  GET_BOOKINGS_BY_USER_ID: (id) => `${API_CABANDBOOKING_BASE_URL}/cab/booking/get-by-userid/${id}`,
 
   // Common service endpoints
   UPLOAD_BASE64_IMAGE: `${API_COMMONSERVICE_BASE_URL}/common/uploadBase64Image`,
