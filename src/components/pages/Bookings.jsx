@@ -352,7 +352,7 @@ const Bookings = () => {
                           setShowBookingModal(true);
                         }}
                       >
-                        View Details
+                        View
                       </button>
                     </div>
                     <div className="card-body">

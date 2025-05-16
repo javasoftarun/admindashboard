@@ -37,12 +37,12 @@ const RegisterCab = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-  
+
     if (e.target.type === "number") {
       if (name === "perKmRate" && value.length > 2) return; // Restrict to 2 digits
       if (name === "baseFare" && value.length > 5) return; // Restrict to 4 digits
     }
-  
+
     if (name.startsWith("cab.")) {
       const cabField = name.split(".")[1];
       setFormData((prev) => ({
@@ -52,7 +52,7 @@ const RegisterCab = () => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  
+
     // Fetch address suggestions if the field is "address"
     if (name === "address") {
       fetchAddressSuggestions(value, setSuggestions); // Pass setSuggestions here
@@ -64,14 +64,14 @@ const RegisterCab = () => {
       setSuggestions([]); // Clear suggestions if query is empty
       return;
     }
-  
+
     if (!window.google || !window.google.maps) {
       console.error("Google Maps API is not loaded.");
       return;
     }
-  
+
     const autocompleteService = new window.google.maps.places.AutocompleteService();
-  
+
     autocompleteService.getPlacePredictions(
       {
         input: query,
@@ -91,13 +91,13 @@ const RegisterCab = () => {
   const handleAddressSelect = (selectedAddress) => {
     setFormData((prev) => ({ ...prev, address: selectedAddress }));
     setSuggestions([]); // Clear suggestions
-  
+
     if (!window.google || !window.google.maps) {
       console.error("Google Maps API is not loaded.");
       return;
     }
     const geocoder = new window.google.maps.Geocoder();
-  
+
     geocoder.geocode({ address: selectedAddress }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
         const location = results[0].geometry.location;
@@ -239,11 +239,11 @@ const RegisterCab = () => {
     if (!formData.ownerName.trim()) {
       newErrors.ownerName = "Owner name is required.";
     } else if (formData.ownerName.length < 3) {
-      newErrors.ownerName = "Owner name must be at least 3 characters long."; 
+      newErrors.ownerName = "Owner name must be at least 3 characters long.";
     } else if (!/^[a-zA-Z\s]+$/.test(formData.ownerName)) {
-      newErrors.ownerName = "Owner name must contain only letters and spaces."; 
+      newErrors.ownerName = "Owner name must contain only letters and spaces.";
     }
-    
+
     if (!formData.address.trim()) {
       newErrors.address = "Address is required.";
     }
@@ -260,7 +260,7 @@ const RegisterCab = () => {
       newErrors.cabType = "Cab type is required.";
     }
     if (!formData.cab.cabInsurance.trim()) {
-      newErrors.cabInsurance = "Cab insurance is required."; 
+      newErrors.cabInsurance = "Cab insurance is required.";
     }
     if (!formData.cab.cabNumber.trim()) {
       newErrors.cabNumber = "Cab number is required.";
@@ -285,13 +285,13 @@ const RegisterCab = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; 
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      return; 
+      return;
     }
     setLoading(true);
     setMessage("");
@@ -348,366 +348,411 @@ const RegisterCab = () => {
   return (
     <Layout>
       <div className="container mt-4">
-        <h1 className="mb-4">Register Cab</h1>
+        <h1 className="mb-4 fw-bold" style={{ color: "#ffc107" }}>
+          <i className="bi bi-taxi-front-fill me-2" style={{ color: "#ffc107" }}></i>
+          Register Cab
+        </h1>
         {message && (
           <div
-            className={`alert ${
-              message.includes("successfully") ? "alert-success" : "alert-danger"
-            }`}
+            className={`alert ${message.includes("successfully") ? "alert-success" : "alert-danger"
+              }`}
             role="alert"
           >
             {message}
           </div>
         )}
-        <div className="card" style={{ maxHeight: "80vh", overflow: "auto" }}>
-        <form onSubmit={handleSubmit}>
-          {/* Owner and Driver Details */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Owner and Driver Details</h5>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="ownerName" className="form-label">
-                    Owner Name
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.ownerName ? "is-invalid" : ""}`}
-                    id="ownerName"
-                    name="ownerName"
-                    value={formData.ownerName}
-                    onChange={handleInputChange}
-                    maxLength={50}
-                  />
-                  {errors.ownerName && <div className="invalid-feedback">{errors.ownerName}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="driverName" className="form-label">
-                    Driver Name
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.driverName ? "is-invalid" : ""}`}
-                    id="driverName"
-                    name="driverName"
-                    value={formData.driverName}
-                    onChange={handleInputChange}
-                    maxLength={50}
-                  />
-                  {errors.driverName && <div className="invalid-feedback">{errors.driverName}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="driverContact" className="form-label">
-                    Driver Contact
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.driverContact ? "is-invalid" : ""}`}
-                    id="driverContact"
-                    name="driverContact"
-                    value={formData.driverContact}
-                    onChange={handleInputChange}
-                    maxLength={10}
-                  />
-                  {errors.driverContact && <div className="invalid-feedback">{errors.driverContact}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="driverLicense" className="form-label">
-                    Driver License
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.driverLicense ? "is-invalid" : ""}`}
-                    id="driverLicense"
-                    name="driverLicense"
-                    value={formData.driverLicense}
-                    onChange={handleInputChange}
-                    maxLength={15}
-                  />
-                  {errors.driverLicense && <div className="invalid-feedback">{errors.driverLicense}</div>}
-                </div>
-                <div className="col-md-12 mb-3">
-                <label htmlFor="address" className="form-label">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.address ? "is-invalid" : ""}`}
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                />
-                {errors.address && <div className="invalid-feedback">{errors.address}</div>}
-
-                {/* Address Suggestions */}
-                {suggestions.length > 0 && (
-                  <ul className="list-group mt-2">
-                    {suggestions.map((suggestion, index) => (
-                      <li
-                        key={index}
-                        className="list-group-item list-group-item-action"
-                        onClick={() => handleAddressSelect(suggestion)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {suggestion}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+        <div className="card shadow" style={{ borderRadius: 16, border: "1px solid #ffe066" }}>
+          <form onSubmit={handleSubmit}>
+            {/* Owner and Driver Details */}
+            <div className="card mb-4 border-0" style={{ borderRadius: 16 }}>
+              <div
+                className="card-header"
+                style={{
+                  background: "#fffbe6",
+                  color: "#b8860b",
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  borderBottom: "2px solid #ffc107",
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                Owner and Driver Details
               </div>
-              </div>
-            </div>
-          </div>
+              <div className="card-body">
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="ownerName" className="form-label">
+                      Owner Name
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.ownerName ? "is-invalid" : ""}`}
+                      id="ownerName"
+                      name="ownerName"
+                      value={formData.ownerName}
+                      onChange={handleInputChange}
+                      maxLength={50}
+                    />
+                    {errors.ownerName && <div className="invalid-feedback">{errors.ownerName}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="driverName" className="form-label">
+                      Driver Name
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.driverName ? "is-invalid" : ""}`}
+                      id="driverName"
+                      name="driverName"
+                      value={formData.driverName}
+                      onChange={handleInputChange}
+                      maxLength={50}
+                    />
+                    {errors.driverName && <div className="invalid-feedback">{errors.driverName}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="driverContact" className="form-label">
+                      Driver Contact
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.driverContact ? "is-invalid" : ""}`}
+                      id="driverContact"
+                      name="driverContact"
+                      value={formData.driverContact}
+                      onChange={handleInputChange}
+                      maxLength={10}
+                    />
+                    {errors.driverContact && <div className="invalid-feedback">{errors.driverContact}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="driverLicense" className="form-label">
+                      Driver License
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.driverLicense ? "is-invalid" : ""}`}
+                      id="driverLicense"
+                      name="driverLicense"
+                      value={formData.driverLicense}
+                      onChange={handleInputChange}
+                      maxLength={15}
+                    />
+                    {errors.driverLicense && <div className="invalid-feedback">{errors.driverLicense}</div>}
+                  </div>
+                  <div className="col-md-12 mb-3">
+                    <label htmlFor="address" className="form-label">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.address ? "is-invalid" : ""}`}
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                    />
+                    {errors.address && <div className="invalid-feedback">{errors.address}</div>}
 
-          {/* Cab Details */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Cab Details</h5>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabName" className="form-label">
-                    Cab Name
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabName ? "is-invalid" : ""}`}
-                    id="cab.cabName"
-                    name="cab.cabName"
-                    value={formData.cab.cabName}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                  />
-                  {errors.cabName && <div className="invalid-feedback">{errors.cabName}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabType" className="form-label">
-                    Cab Type
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabType ? "is-invalid" : ""}`}
-                    id="cab.cabType"
-                    name="cab.cabType"
-                    value={formData.cab.cabType}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                  />
-                  {errors.cabType && <div className="invalid-feedback">{errors.cabType}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabNumber" className="form-label">
-                    Cab Number
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabNumber ? "is-invalid" : ""}`}
-                    id="cab.cabNumber"
-                    name="cab.cabNumber"
-                    value={formData.cab.cabNumber}
-                    onChange={handleInputChange}
-                    maxLength={12}
-                  />
-                  {errors.cabNumber && <div className="invalid-feedback">{errors.cabNumber}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabModel" className="form-label">
-                    Cab Model
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabModel ? "is-invalid" : ""}`}
-                    id="cab.cabModel"
-                    name="cab.cabModel"
-                    value={formData.cab.cabModel}
-                    onChange={handleInputChange}
-                    maxLength={10}
-                  />
-                  {errors.cabModel && <div className="invalid-feedback">{errors.cabModel}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabColor" className="form-label">
-                    Cab Color
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabColor ? "is-invalid" : ""}`}
-                    id="cab.cabColor"
-                    name="cab.cabColor"
-                    value={formData.cab.cabColor}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                  />
-                  {errors.cabColor && <div className="invalid-feedback">{errors.cabColor}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabInsurance" className="form-label">
-                    Cab Insurance
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabInsurance ? "is-invalid" : ""}`}
-                    id="cab.cabInsurance"
-                    name="cab.cabInsurance"
-                    value={formData.cab.cabInsurance}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                  />
-                  {errors.cabInsurance && <div className="invalid-feedback">{errors.cabInsurance}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabCapacity" className="form-label">
-                    Cab Capacity
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabCapacity ? "is-invalid" : ""}`}
-                    id="cab.cabCapacity"
-                    name="cab.cabCapacity"
-                    value={formData.cab.cabCapacity}
-                    onChange={handleInputChange}
-                    maxLength={3}
-                  />
-                  {errors.cabCapacity && <div className="invalid-feedback">{errors.cabCapacity}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabState" className="form-label">
-                    Cab State
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabState ? "is-invalid" : ""}`}
-                    id="cab.cabState"
-                    name="cab.cabState"
-                    value={formData.cab.cabState}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                  />
-                  {errors.cabState && <div className="invalid-feedback">{errors.cabState}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabCity" className="form-label">
-                    Cab City
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.cabCity ? "is-invalid" : ""}`}
-                    id="cab.cabCity"
-                    name="cab.cabCity"
-                    value={formData.cab.cabCity}
-                    onChange={handleInputChange}
-                    maxLength={50}
-                  />
-                  {errors.cabCity && <div className="invalid-feedback">{errors.cabCity}</div>}
-                </div>
-                
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cabImageUpload" className="form-label">
-                    Upload Cab Image
-                  </label>
-                  <input
-                    type="file"
-                    className={`form-control ${errors.cabImageUpload ? "is-invalid" : ""}`}
-                    id="cabImageUpload"
-                    onChange={handleImageUpload}
-                    disabled={imageUploading}
-                  />
-                  {errors.cabImageUpload && <div className="invalid-feedback">{errors.cabImageUpload}</div>}
-                  {imageUploading && (
-                    <div className="mt-2">
-                      <span
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>{" "}
-                      Uploading...
-                    </div>
-                  )}
-                  {imagePreview && (
-                    <div className="mt-3">
-                      <img
-                        src={imagePreview}
-                        alt="Cab Preview"
-                        className="img-thumbnail"
-                        style={{ maxWidth: "100px" }}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="cab.cabImageUrl" className="form-label">
-                    Cab Image URL
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="cab.cabImageUrl"
-                    name="cab.cabImageUrl"
-                    value={formData.cab.cabImageUrl}
-                    onChange={handleInputChange}
-                    readOnly
-                  />
+                    {/* Address Suggestions */}
+                    {suggestions.length > 0 && (
+                      <ul className="list-group mt-2">
+                        {suggestions.map((suggestion, index) => (
+                          <li
+                            key={index}
+                            className="list-group-item list-group-item-action"
+                            onClick={() => handleAddressSelect(suggestion)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Location and Pricing */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Location and Pricing</h5>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="perKmRate" className="form-label">
-                    Per Km Rate
-                  </label>
-                  <input
-                    type="number"
-                    className={`form-control ${errors.perKmRate ? "is-invalid" : ""}`}
-                    id="perKmRate"
-                    name="perKmRate"
-                    value={formData.perKmRate}
-                    onChange={handleInputChange}
-                  />
-                  {errors.perKmRate && <div className="invalid-feedback">{errors.perKmRate}</div>}
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="baseFare" className="form-label">
-                    Base Fare
-                  </label>
-                  <input
-                    type="number"
-                    className={`form-control ${errors.baseFare ? "is-invalid" : ""}`}
-                    id="baseFare"
-                    name="baseFare"
-                    value={formData.baseFare}
-                    onChange={handleInputChange}
-                  />
-                  {errors.baseFare && <div className="invalid-feedback">{errors.baseFare}</div>}
+            {/* Cab Details */}
+            <div className="card mb-4 border-0" style={{ borderRadius: 16 }}>
+              <div
+                className="card-header"
+                style={{
+                  background: "#fffbe6",
+                  color: "#b8860b",
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  borderBottom: "2px solid #ffc107",
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                Cab Details
+              </div>
+              <div className="card-body">
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabName" className="form-label">
+                      Cab Name
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabName ? "is-invalid" : ""}`}
+                      id="cab.cabName"
+                      name="cab.cabName"
+                      value={formData.cab.cabName}
+                      onChange={handleInputChange}
+                      maxLength={30}
+                    />
+                    {errors.cabName && <div className="invalid-feedback">{errors.cabName}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabType" className="form-label">
+                      Cab Type
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabType ? "is-invalid" : ""}`}
+                      id="cab.cabType"
+                      name="cab.cabType"
+                      value={formData.cab.cabType}
+                      onChange={handleInputChange}
+                      maxLength={30}
+                    />
+                    {errors.cabType && <div className="invalid-feedback">{errors.cabType}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabNumber" className="form-label">
+                      Cab Number
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabNumber ? "is-invalid" : ""}`}
+                      id="cab.cabNumber"
+                      name="cab.cabNumber"
+                      value={formData.cab.cabNumber}
+                      onChange={handleInputChange}
+                      maxLength={12}
+                    />
+                    {errors.cabNumber && <div className="invalid-feedback">{errors.cabNumber}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabModel" className="form-label">
+                      Cab Model
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabModel ? "is-invalid" : ""}`}
+                      id="cab.cabModel"
+                      name="cab.cabModel"
+                      value={formData.cab.cabModel}
+                      onChange={handleInputChange}
+                      maxLength={10}
+                    />
+                    {errors.cabModel && <div className="invalid-feedback">{errors.cabModel}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabColor" className="form-label">
+                      Cab Color
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabColor ? "is-invalid" : ""}`}
+                      id="cab.cabColor"
+                      name="cab.cabColor"
+                      value={formData.cab.cabColor}
+                      onChange={handleInputChange}
+                      maxLength={30}
+                    />
+                    {errors.cabColor && <div className="invalid-feedback">{errors.cabColor}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabInsurance" className="form-label">
+                      Cab Insurance
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabInsurance ? "is-invalid" : ""}`}
+                      id="cab.cabInsurance"
+                      name="cab.cabInsurance"
+                      value={formData.cab.cabInsurance}
+                      onChange={handleInputChange}
+                      maxLength={30}
+                    />
+                    {errors.cabInsurance && <div className="invalid-feedback">{errors.cabInsurance}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabCapacity" className="form-label">
+                      Cab Capacity
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabCapacity ? "is-invalid" : ""}`}
+                      id="cab.cabCapacity"
+                      name="cab.cabCapacity"
+                      value={formData.cab.cabCapacity}
+                      onChange={handleInputChange}
+                      maxLength={3}
+                    />
+                    {errors.cabCapacity && <div className="invalid-feedback">{errors.cabCapacity}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabState" className="form-label">
+                      Cab State
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabState ? "is-invalid" : ""}`}
+                      id="cab.cabState"
+                      name="cab.cabState"
+                      value={formData.cab.cabState}
+                      onChange={handleInputChange}
+                      maxLength={30}
+                    />
+                    {errors.cabState && <div className="invalid-feedback">{errors.cabState}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabCity" className="form-label">
+                      Cab City
+                    </label>
+                    <input
+                      type="text"
+                      className={`form-control ${errors.cabCity ? "is-invalid" : ""}`}
+                      id="cab.cabCity"
+                      name="cab.cabCity"
+                      value={formData.cab.cabCity}
+                      onChange={handleInputChange}
+                      maxLength={50}
+                    />
+                    {errors.cabCity && <div className="invalid-feedback">{errors.cabCity}</div>}
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cabImageUpload" className="form-label">
+                      Upload Cab Image
+                    </label>
+                    <input
+                      type="file"
+                      className={`form-control ${errors.cabImageUpload ? "is-invalid" : ""}`}
+                      id="cabImageUpload"
+                      onChange={handleImageUpload}
+                      disabled={imageUploading}
+                    />
+                    {errors.cabImageUpload && <div className="invalid-feedback">{errors.cabImageUpload}</div>}
+                    {imageUploading && (
+                      <div className="mt-2">
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>{" "}
+                        Uploading...
+                      </div>
+                    )}
+                    {imagePreview && (
+                      <div className="mt-3">
+                        <img
+                          src={imagePreview}
+                          alt="Cab Preview"
+                          className="img-thumbnail"
+                          style={{ maxWidth: "100px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="cab.cabImageUrl" className="form-label">
+                      Cab Image URL
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cab.cabImageUrl"
+                      name="cab.cabImageUrl"
+                      value={formData.cab.cabImageUrl}
+                      onChange={handleInputChange}
+                      readOnly
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-            ) : (
-              "Register Cab"
-            )}
-          </button>
-        </form>
+            {/* Location and Pricing */}
+            <div className="card mb-4 border-0" style={{ borderRadius: 16 }}>
+              <div
+                className="card-header"
+                style={{
+                  background: "#fffbe6",
+                  color: "#b8860b",
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  borderBottom: "2px solid #ffc107",
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                Location and Pricing
+              </div>
+              <div className="card-body">
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="perKmRate" className="form-label">
+                      Per Km Rate
+                    </label>
+                    <input
+                      type="number"
+                      className={`form-control ${errors.perKmRate ? "is-invalid" : ""}`}
+                      id="perKmRate"
+                      name="perKmRate"
+                      value={formData.perKmRate}
+                      onChange={handleInputChange}
+                    />
+                    {errors.perKmRate && <div className="invalid-feedback">{errors.perKmRate}</div>}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="baseFare" className="form-label">
+                      Base Fare
+                    </label>
+                    <input
+                      type="number"
+                      className={`form-control ${errors.baseFare ? "is-invalid" : ""}`}
+                      id="baseFare"
+                      name="baseFare"
+                      value={formData.baseFare}
+                      onChange={handleInputChange}
+                    />
+                    {errors.baseFare && <div className="invalid-feedback">{errors.baseFare}</div>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-warning fw-bold text-dark px-4"
+              style={{
+                background: "#ffc107",
+                borderColor: "#ffc107",
+                boxShadow: "0 2px 8px #ffe06650",
+                borderRadius: 8,
+              }}
+              disabled={loading}
+            >
+              {loading ? (
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              ) : (
+                "Register Cab"
+              )}
+            </button>
+          </form>
         </div>
 
         {/* Modal */}

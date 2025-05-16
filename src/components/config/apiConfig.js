@@ -33,6 +33,7 @@ const API_ENDPOINTS = {
   ADD_OFFER: `${API_COMMONSERVICE_BASE_URL}/common/offer/create`,
   UPDATE_OFFER: (id) => `${API_COMMONSERVICE_BASE_URL}/common/offer/update/${id}`,
   DELETE_OFFER: (id) => `${API_COMMONSERVICE_BASE_URL}/common/offer/delete/${id}`,
+  DASHBOARD_DATA: `${API_COMMONSERVICE_BASE_URL}/common/dashboard/data`,
 };
 
 export default API_ENDPOINTS;
