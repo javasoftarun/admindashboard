@@ -3,6 +3,8 @@ import Layout from "../layout/Layout";
 import API_ENDPOINTS from "../config/apiConfig";
 import { Bar, Doughnut } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,6 +26,36 @@ ChartJS.register(
   Legend,
   ArcElement,
   ChartDataLabels
+);
+
+const DashboardSkeleton = () => (
+  <>
+    <div className="row g-3 mb-4">
+      {[...Array(6)].map((_, i) => (
+        <div className="col-6 col-md-4 col-lg-2" key={i}>
+          <Skeleton height={90} borderRadius={12} />
+        </div>
+      ))}
+    </div>
+    <div className="row g-4">
+      <div className="col-md-6">
+        <Skeleton height={300} borderRadius={16} />
+      </div>
+      <div className="col-md-6">
+        <Skeleton height={300} borderRadius={16} />
+      </div>
+    </div>
+    <div className="row mt-4">
+      <div className="col-md-12">
+        <Skeleton height={60} borderRadius={8} />
+      </div>
+    </div>
+    <div className="row mt-4">
+      <div className="col-md-12">
+        <Skeleton height={120} borderRadius={8} />
+      </div>
+    </div>
+  </>
 );
 
 const Index = () => {
@@ -163,9 +195,7 @@ const Index = () => {
     <Layout>
       <div className="container mt-4">
         {loading ? (
-          <div className="text-center py-5">
-            <span className="spinner-border text-warning" role="status" />
-          </div>
+          <DashboardSkeleton />
         ) : (
           <>
             {/* Dashboard Summary Cards */}
