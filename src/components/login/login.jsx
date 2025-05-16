@@ -75,128 +75,163 @@ const Login = () => {
     }
   };
 
-  return (
+  // Change the outermost background and card header/footer for a clean, minimal look:
+
+return (
+  <div
+    className="d-flex justify-content-center align-items-center"
+    style={{
+      minHeight: "100vh",
+      width: "100vw",
+      background: "#f8fafc", // Soft gray/white background, no yellow
+      margin: 0,
+    }}
+  >
     <div
-      className="d-flex justify-content-center align-items-center"
+      className="shadow-lg border-0"
       style={{
-        height: "100vh", // Full height of the viewport
-        width: "100vw", // Full width of the viewport
-        backgroundColor: "#f8f9fa", // Light background
-        margin: 0, // Remove any margin
+        width: "100%",
+        maxWidth: "370px",
+        borderRadius: "20px",
+        background: "#fff",
+        overflow: "hidden",
+        boxShadow: "0 6px 32px #e0e0e055",
       }}
     >
+      {/* Logo & Title */}
       <div
-        className="card shadow-lg border-0"
+        className="text-center"
         style={{
-          width: "100%", // Full width for mobile
-          maxWidth: "400px", // Limit width on larger screens
-          height: "auto", // Adjust height based on content
-          borderRadius: "10px", // Add slight border radius for better aesthetics
-          overflow: "hidden",
+          background: "#fff",
+          padding: "30px 20px 18px 20px",
+          borderBottom: "1px solid #f0f0f0",
         }}
       >
-        {/* Logo Section */}
         <div
-          className="text-center"
+          className="d-inline-flex align-items-center justify-content-center mb-2"
           style={{
-            backgroundColor: "#333333", // Dark background for contrast
-            padding: "30px 20px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Subtle shadow
+            width: 54,
+            height: 54,
+            borderRadius: "50%",
+            background: "#f8fafc",
+            boxShadow: "0 2px 8px #e0e0e055",
           }}
         >
           <img
-            src={require("../../assets/logo.png")} // Adjust the path based on your project structure
+            src={require("../../assets/logo.png")}
             alt="YatraNow Logo"
             style={{
-              height: "50px", // Increased size for better visibility
-              marginBottom: "10px",
+              height: "38px",
+              filter: "drop-shadow(0 2px 8px #ffe06644)",
             }}
           />
         </div>
-
-        {/* Login Form */}
-        <div className="card-body d-flex flex-column justify-content-center">
-          <h4 className="text-center mb-4 text-dark">Login</h4>
-          {errors.general && (
-            <div className="alert alert-danger" role="alert">
-              {errors.general}
-            </div>
-          )}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="username" className="form-label text-dark">
-                Username
-              </label>
-              <input
-                type="text"
-                className={`form-control ${
-                  errors.username ? "is-invalid" : ""
-                }`}
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Enter your username"
-              />
-              {errors.username && (
-                <div className="invalid-feedback">{errors.username}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label text-dark">
-                Password
-              </label>
-              <input
-                type="password"
-                className={`form-control ${
-                  errors.password ? "is-invalid" : ""
-                }`}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-              />
-              {errors.password && (
-                <div className="invalid-feedback">{errors.password}</div>
-              )}
-            </div>
-            <div className="text-end mb-3">
-              <Link to="/forgot-password" className="text-primary">
-                Forgot Password?
-              </Link>
-            </div>
-            <button
-              type="submit"
-              className="btn btn-warning w-100 text-dark fw-bold"
-              disabled={loading}
-            >
-              {loading ? (
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-              ) : (
-                "Login"
-              )}
-            </button>
-          </form>
-        </div>
-
-        {/* Footer */}
-        <div
-          className="card-footer text-center"
-          style={{
-            backgroundColor: "#333333", // Dark footer for contrast
-            padding: "15px",
-          }}
+        <h2
+          className="fw-bold mt-2 mb-0"
+          style={{ color: "#b8860b", letterSpacing: 1, fontSize: 24 }}
         >
-          <p className="text-white mb-0">Welcome to YatraNow!</p>
+          YatraNow Admin
+        </h2>
+        <div className="text-muted" style={{ fontSize: 15 }}>
+          Sign in to your dashboard
         </div>
       </div>
+
+      {/* Login Form */}
+      <div className="p-4" style={{ background: "#fff" }}>
+        <h4 className="text-center mb-4 text-dark fw-bold" style={{ letterSpacing: 0.5 }}>
+          Login
+        </h4>
+        {errors.general && (
+          <div className="alert alert-danger py-2" role="alert" style={{ fontSize: 14 }}>
+            {errors.general}
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label fw-semibold" style={{ color: "#b8860b" }}>
+              Username
+            </label>
+            <input
+              type="text"
+              className={`form-control border-warning ${errors.username ? "is-invalid" : ""}`}
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              style={{ background: "#f8fafc" }}
+              autoFocus
+            />
+            {errors.username && (
+              <div className="invalid-feedback">{errors.username}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label fw-semibold" style={{ color: "#b8860b" }}>
+              Password
+            </label>
+            <input
+              type="password"
+              className={`form-control border-warning ${errors.password ? "is-invalid" : ""}`}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              style={{ background: "#f8fafc" }}
+            />
+            {errors.password && (
+              <div className="invalid-feedback">{errors.password}</div>
+            )}
+          </div>
+          <div className="text-end mb-3">
+            <Link to="/forgot-password" className="text-primary" style={{ fontSize: 14 }}>
+              Forgot Password?
+            </Link>
+          </div>
+          <button
+            type="submit"
+            className="btn btn-warning w-100 text-dark fw-bold"
+            style={{
+              background: "#ffc107",
+              borderRadius: 8,
+              fontSize: "1.08rem",
+              boxShadow: "0 2px 8px #ffe06633",
+              letterSpacing: 0.5,
+            }}
+            disabled={loading}
+          >
+            {loading ? (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            ) : (
+              "Login"
+            )}
+          </button>
+        </form>
+      </div>
+
+      {/* Footer */}
+      <div
+        className="text-center"
+        style={{
+          background: "#fff",
+          padding: "13px",
+          borderTop: "1px solid #f0f0f0",
+        }}
+      >
+        <span className="text-muted" style={{ fontSize: 13 }}>
+          &copy; {new Date().getFullYear()} YatraNow &mdash; Welcome!
+        </span>
+      </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Login;
