@@ -240,42 +240,44 @@ const ShowRegisteredCabs = () => {
                       </span>
                     </p>
                   </div>
-                  <div className="card-footer d-flex justify-content-end gap-1 mt-auto bg-white border-0 py-2 px-1">
-                    <button
-                      className="btn btn-outline-warning btn-xs d-flex align-items-center px-2 py-1"
-                      style={{ fontSize: "0.85rem", fontWeight: 500, borderColor: "#ffc107" }}
-                      title="View Details"
-                      onClick={() => {
-                        setCabDetails(cab);
-                        setShowCabModal(true);
-                      }}
-                    >
-                      <i className="bi bi-eye me-1"></i> View
-                    </button>
-                    <button
-                      className="btn btn-outline-dark btn-xs d-flex align-items-center px-2 py-1"
-                      style={{ fontSize: "0.85rem" }}
-                      title="View Bookings"
-                      onClick={() => handleShowBookings(cab)}
-                    >
-                      <i className="bi bi-calendar-check me-1"></i> Bookings
-                    </button>
-                    <button
-                      className="btn btn-outline-primary btn-xs d-flex align-items-center px-2 py-1"
-                      style={{ fontSize: "0.85rem" }}
-                      title="Edit Cab"
-                      onClick={() => handleEdit(cab)}
-                    >
-                      <i className="bi bi-pencil-square me-1"></i> Edit
-                    </button>
-                    <button
-                      className="btn btn-outline-danger btn-xs d-flex align-items-center px-2 py-1"
-                      style={{ fontSize: "0.85rem" }}
-                      title="Delete Cab"
-                      onClick={() => handleDelete(cab)}
-                    >
-                      <i className="bi bi-trash me-1"></i> Delete
-                    </button>
+                  <div className="card-footer bg-white border-0 py-2 px-1">
+                    <div className="d-flex flex-wrap justify-content-center gap-2">
+                      <button
+                        className="btn btn-outline-warning btn-xs d-flex align-items-center justify-content-center"
+                        style={{ fontSize: "1.1rem", borderColor: "#ffc107", width: 32, height: 32 }}
+                        title="View Details"
+                        onClick={() => {
+                          setCabDetails(cab);
+                          setShowCabModal(true);
+                        }}
+                      >
+                        <i className="bi bi-eye"></i>
+                      </button>
+                      <button
+                        className="btn btn-outline-dark btn-xs d-flex align-items-center justify-content-center"
+                        style={{ fontSize: "1.1rem", width: 32, height: 32 }}
+                        title="View Bookings"
+                        onClick={() => handleShowBookings(cab)}
+                      >
+                        <i className="bi bi-calendar-check"></i>
+                      </button>
+                      <button
+                        className="btn btn-outline-primary btn-xs d-flex align-items-center justify-content-center"
+                        style={{ fontSize: "1.1rem", width: 32, height: 32 }}
+                        title="Edit Cab"
+                        onClick={() => handleEdit(cab)}
+                      >
+                        <i className="bi bi-pencil-square"></i>
+                      </button>
+                      <button
+                        className="btn btn-outline-danger btn-xs d-flex align-items-center justify-content-center"
+                        style={{ fontSize: "1.1rem", width: 32, height: 32 }}
+                        title="Delete Cab"
+                        onClick={() => handleDelete(cab)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

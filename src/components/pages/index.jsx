@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import { Bar, Pie } from "react-chartjs-2";
+import API_ENDPOINTS from "../config/apiConfig";
+import { Bar, Doughnut } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +13,6 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import API_ENDPOINTS from "../config/apiConfig";
 
 // Register Chart.js components
 ChartJS.register(
@@ -21,7 +22,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  ChartDataLabels
 );
 
 const Index = () => {
@@ -29,12 +31,9 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with your actual API endpoint
     fetch(API_ENDPOINTS.DASHBOARD_DATA, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -49,19 +48,25 @@ const Index = () => {
   const totalProfit = dashboard?.totalProfit ?? 0;
   const totalBookings = dashboard?.totalBookings ?? 0;
   const pendingBookings = dashboard?.pendingBookings ?? 0;
+  const canceledBookings = dashboard?.canceledBookings ?? 0;
+  const totalCabs = dashboard?.totalCabs ?? 0;
   const activeCabs = dashboard?.activeCabs ?? 0;
   const inactiveCabs = dashboard?.inactiveCabs ?? 0;
 
-  // Example static chart data (replace with real data if available)
+  // Chart colors
+  const yellow = "#ffc107";
+  const gray = "#e0e0e0";
+
+  // Bar Chart
   const barChartData = {
     labels: ["Active Cabs", "Inactive Cabs"],
     datasets: [
       {
         label: "Cabs",
         data: [activeCabs, inactiveCabs],
-        backgroundColor: ["#36A2EB", "#FF6384"],
-        borderColor: ["#36A2EB", "#FF6384"],
-        borderWidth: 1,
+        backgroundColor: [yellow, gray],
+        borderRadius: 8,
+        maxBarThickness: 40,
       },
     ],
   };
@@ -70,20 +75,75 @@ const Index = () => {
     responsive: true,
     plugins: {
       legend: { display: false },
-      title: { display: true, text: "Cab Status" },
+      title: {
+        display: true,
+        text: "Cab Status",
+        color: "#b8860b",
+        font: { size: 20, weight: "bold" },
+        padding: { top: 10, bottom: 20 },
+      },
+      datalabels: {
+        anchor: "end",
+        align: "top",
+        color: "#333",
+        font: { weight: "bold", size: 14 },
+        formatter: Math.round,
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#b8860b", font: { weight: "bold" } },
+        grid: { display: false },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: "#b8860b", font: { weight: "bold" } },
+        grid: { color: "#ffe066" },
+      },
     },
   };
 
-  const pieChartData = {
+  // Doughnut Chart
+  const doughnutChartData = {
     labels: ["Active Cabs", "Inactive Cabs"],
     datasets: [
       {
         label: "Cab Status",
         data: [activeCabs, inactiveCabs],
-        backgroundColor: ["#36A2EB", "#FF6384"],
-        hoverBackgroundColor: ["#36A2EB", "#FF6384"],
+        backgroundColor: [yellow, gray],
+        borderColor: "#fff",
+        borderWidth: 2,
       },
     ],
+  };
+
+  const doughnutChartOptions = {
+    responsive: true,
+    cutout: "70%",
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom",
+        labels: { color: "#b8860b", font: { size: 14, weight: "bold" } },
+      },
+      title: {
+        display: true,
+        text: "Cab Status Distribution",
+        color: "#b8860b",
+        font: { size: 20, weight: "bold" },
+        padding: { top: 10, bottom: 20 },
+      },
+      datalabels: {
+        color: "#333",
+        font: { weight: "bold", size: 16 },
+        formatter: (value) => value,
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.label}: ${ctx.parsed}`,
+        },
+      },
+    },
   };
 
   // Example data for latest messages and recent bookings (static for now)
@@ -108,58 +168,71 @@ const Index = () => {
           </div>
         ) : (
           <>
-            {/* Summary Cards */}
-            <div className="row mb-4">
-              <div className="col-md-3">
-                <div className="card shadow-sm text-center">
+            {/* Dashboard Summary Cards */}
+            <div className="row g-3 mb-4">
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
                   <div className="card-body">
-                    <h5 className="card-title">Total Users</h5>
-                    <p className="card-text display-6">{totalUsers}</p>
+                    <div className="fw-bold text-muted mb-1">Total Users</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>{totalUsers}</div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-3">
-                <div className="card shadow-sm text-center">
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
                   <div className="card-body">
-                    <h5 className="card-title">Total Profit</h5>
-                    <p className="card-text display-6">₹{totalProfit}</p>
+                    <div className="fw-bold text-muted mb-1">Total Profit</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>₹{totalProfit}</div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-3">
-                <div className="card shadow-sm text-center">
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
                   <div className="card-body">
-                    <h5 className="card-title">Total Bookings</h5>
-                    <p className="card-text display-6">{totalBookings}</p>
+                    <div className="fw-bold text-muted mb-1">Total Bookings</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>{totalBookings}</div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-3">
-                <div className="card shadow-sm text-center">
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
                   <div className="card-body">
-                    <h5 className="card-title">Pending Bookings</h5>
-                    <p className="card-text display-6">{pendingBookings}</p>
+                    <div className="fw-bold text-muted mb-1">Pending Bookings</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>{pendingBookings}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
+                  <div className="card-body">
+                    <div className="fw-bold text-muted mb-1">Canceled Bookings</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>{canceledBookings}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-6 col-md-4 col-lg-2">
+                <div className="card shadow-sm text-center" style={{ borderBottom: "4px solid #ffc107" }}>
+                  <div className="card-body">
+                    <div className="fw-bold text-muted mb-1">Total Cabs</div>
+                    <div className="display-6" style={{ color: "#b8860b" }}>{totalCabs}</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Charts */}
-            <div className="row">
-              {/* Bar Chart */}
+            <div className="row g-4">
               <div className="col-md-6">
-                <div className="card shadow-sm">
+                <div className="card shadow-sm" style={{ borderRadius: 16 }}>
                   <div className="card-body">
-                    <Bar data={barChartData} options={barChartOptions} />
+                    <Bar data={barChartData} options={barChartOptions} plugins={[ChartDataLabels]} />
                   </div>
                 </div>
               </div>
-
-              {/* Pie Chart */}
               <div className="col-md-6">
-                <div className="card shadow-sm">
+                <div className="card shadow-sm" style={{ borderRadius: 16 }}>
                   <div className="card-body">
-                    <Pie data={pieChartData} />
+                    <Doughnut data={doughnutChartData} options={doughnutChartOptions} plugins={[ChartDataLabels]} />
                   </div>
                 </div>
               </div>

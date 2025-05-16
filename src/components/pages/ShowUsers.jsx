@@ -199,19 +199,43 @@ const ShowUsers = () => {
             </h1>
           </div>
           <div className="col-12 col-md-6 d-flex justify-content-end align-items-center gap-2">
+
             <button
-              className="btn btn-warning text-dark fw-bold me-2 d-flex align-items-center"
-              style={{ borderColor: "#ffc107", boxShadow: "0 2px 8px #ffe06650" }}
+              className="btn btn-warning btn-sm fw-bold d-flex align-items-center shadow-sm"
+              style={{
+                borderColor: "#ffc107",
+                background: "#ffc107",
+                color: "#7c5c00",
+                borderRadius: 6,
+                padding: "0.25rem 0.75rem",
+                fontSize: "0.97rem",
+                minWidth: 90,
+                justifyContent: "center",
+                boxShadow: "0 1px 4px #ffe06655"
+              }}
               onClick={() => setShowAddUserModal(true)}
             >
-              <i className="bi bi-person-plus me-2"></i> Add User
+              <i className="bi bi-person-plus me-1" style={{ fontSize: "1.1rem" }}></i>
+              Add User
             </button>
             <button
-              className="btn btn-outline-success btn-sm fw-bold me-2 d-flex align-items-center"
+              className="btn btn-warning btn-sm fw-bold d-flex align-items-center shadow-sm"
+              style={{
+                borderColor: "#ffc107",
+                background: "#ffc107",
+                color: "#7c5c00",
+                borderRadius: 6,
+                padding: "0.25rem 0.75rem",
+                fontSize: "0.97rem",
+                minWidth: 90,
+                justifyContent: "center",
+                boxShadow: "0 1px 4px #ffe06655"
+              }}
               onClick={handleExportCSV}
               title="Export as CSV"
             >
-              <i className="bi bi-file-earmark-spreadsheet me-2"></i> Export CSV
+              <i className="bi bi-file-earmark-spreadsheet me-1" style={{ fontSize: "1.1rem" }}></i>
+              Export CSV
             </button>
             <div className="input-group w-50">
               <input

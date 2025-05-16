@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import CryptoJS from "crypto-js"; // Import crypto-js for password encryption
+import CryptoJS from "crypto-js";
 import API_ENDPOINTS from "../config/apiConfig";
 
 const ForgotPassword = () => {
-  const [step, setStep] = useState(1); // Step 1: Send OTP, Step 2: Verify OTP
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -24,16 +23,16 @@ const ForgotPassword = () => {
       const response = await fetch(API_ENDPOINTS.FORGOT_PASSWORD, {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain", // Set Content-Type to text/plain
+          "Content-Type": "text/plain", 
         },
-        body: email, // Send email as a plain string
+        body: email, 
       });
 
       if (response.ok) {
-        const responseData = await response.json(); // Parse the response
+        const responseData = await response.json();
         if (responseData.responseMessage === "success") {
           setMessage("OTP sent to your email.");
-          setStep(2); // Move to Step 2
+          setStep(2); 
         } else {
           setMessage(responseData.responseMessage || "Failed to send OTP.");
         }
@@ -93,7 +92,7 @@ const ForgotPassword = () => {
       className="d-flex justify-content-center align-items-center"
       style={{
         height: "100vh",
-        backgroundColor: "#f8f9fa", // Light background
+        backgroundColor: "#f8f9fa",
       }}
     >
       <div
