@@ -10,12 +10,13 @@ import CabBookingsModal from "../modal/CabBookingsModal";
 const ShowRegisteredCabs = () => {
   const navigate = useNavigate();
   const [cabs, setCabs] = useState([]);
-  const [visibleCabs, setVisibleCabs] = useState([]);
+  const [filteredCabs, setFilteredCabs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [sortField, setSortField] = useState("registrationId");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 8;
   const [imageLoading, setImageLoading] = useState({});
   const [selectedCab, setSelectedCab] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -38,7 +39,6 @@ const ShowRegisteredCabs = () => {
         }
         const data = await response.json();
         setCabs(data.responseData);
-        setVisibleCabs(data.responseData.slice(0, itemsPerPage));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -49,35 +49,67 @@ const ShowRegisteredCabs = () => {
     fetchCabs();
   }, []);
 
+  // Filtering and sorting logic
+  useEffect(() => {
+    let result = [...cabs];
+
+    // Filter by search term
+    if (searchTerm) {
+      result = result.filter((cab) =>
+        cab.cab.cabName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cab.ownerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cab.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cab.cab.cabNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cab.cab.cabType.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by status
+    if (statusFilter !== "All") {
+      result = result.filter((cab) => cab.status === statusFilter);
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      let aValue, bValue;
+      if (sortField === "cabName") {
+        aValue = a.cab.cabName.toLowerCase();
+        bValue = b.cab.cabName.toLowerCase();
+      } else if (sortField === "registrationId") {
+        aValue = a.registrationId;
+        bValue = b.registrationId;
+      } else if (sortField === "status") {
+        aValue = a.status;
+        bValue = b.status;
+      } else {
+        aValue = a[sortField];
+        bValue = b[sortField];
+      }
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    setFilteredCabs(result);
+  }, [cabs, searchTerm, statusFilter, sortField, sortOrder]);
+
   // Handle search input change
   const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    // Filter cabs based on search term
-    const filtered = cabs.filter((cab) =>
-      cab.cab.cabName.toLowerCase().includes(value) ||
-      cab.ownerName.toLowerCase().includes(value) ||
-      cab.driverName.toLowerCase().includes(value) ||
-      cab.cab.cabNumber.toLowerCase().includes(value) ||
-      cab.cab.cabType.toLowerCase().includes(value)
-    );
-    setVisibleCabs(filtered.slice(0, page * itemsPerPage));
+    setSearchTerm(e.target.value);
   };
 
-  // Load more cabs when scrolling
-  const loadMoreCabs = () => {
-    const nextPage = page + 1;
-    const newVisibleCabs = cabs.slice(0, nextPage * itemsPerPage);
-    setVisibleCabs(newVisibleCabs);
-    setPage(nextPage);
+  // Handle status filter change
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value);
   };
 
-  // Detect when user scrolls to the bottom
-  const handleScroll = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-    if (scrollTop + clientHeight >= scrollHeight - 10 && visibleCabs.length < cabs.length) {
-      loadMoreCabs();
+  // Handle sort field and order
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
     }
   };
 
@@ -116,15 +148,11 @@ const ShowRegisteredCabs = () => {
 
       if (response.ok && data.responseCode === 200) {
         setCabs((prevCabs) => prevCabs.filter((cab) => cab.registrationId !== selectedCab.registrationId));
-        setVisibleCabs((prevVisibleCabs) =>
-          prevVisibleCabs.filter((cab) => cab.registrationId !== selectedCab.registrationId)
-        );
         setModalMessage({ type: "success", text: "Cab deleted successfully!" });
       } else {
         setModalMessage({ type: "error", text: `Failed to delete cab: ${data.responseMessage}` });
       }
     } catch (error) {
-      console.error("Error deleting cab:", error);
       setModalMessage({ type: "error", text: "An error occurred while deleting the cab. Please try again." });
     } finally {
       setDeleting(false);
@@ -160,36 +188,53 @@ const ShowRegisteredCabs = () => {
 
   return (
     <Layout>
-      <div
-        className="container mt-4 overflow-auto position-relative"
-        onScroll={handleScroll}
-      >
+      <div className="container mt-4 overflow-auto position-relative">
         <h1 className="mb-4" style={{ color: "#ffc107", fontWeight: 700, letterSpacing: 1 }}>
           <i className="bi bi-truck me-2" style={{ color: "#ffc107" }}></i>
           Registered Cabs
         </h1>
 
-        {/* Search Bar */}
-        <div className="input-group mb-4">
-          <input
-            type="text"
-            className="form-control border-warning"
-            placeholder="Search by cab name, owner, driver, cab number, or type..."
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-          <span className="input-group-text border-warning bg-warning text-dark">
-            <i className="bi bi-search"></i>
-          </span>
+        {/* Filter & Sort Controls */}
+        <div className="row mb-3">
+          <div className="col-md-4 mb-2">
+            <input
+              type="text"
+              className="form-control border-warning"
+              placeholder="Search by cab name, owner, driver, cab number, or type..."
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
+          <div className="col-md-3 mb-2">
+            <select
+              className="form-select border-warning"
+              value={statusFilter}
+              onChange={handleStatusFilter}
+            >
+              <option value="All">All Status</option>
+              <option value="active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <div className="col-md-5 mb-2 d-flex gap-2">
+            <button
+              className={`btn btn-outline-warning fw-bold ${sortField === "registrationId" ? "active" : ""}`}
+              onClick={() => handleSort("registrationId")}
+            >
+              Reg. ID {sortField === "registrationId" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+            </button>
+            
+          </div>
         </div>
 
         {loading && <LoadingSpinner />}
 
         {error && <p className="text-danger">{error}</p>}
 
-        {!loading && !error && visibleCabs.length > 0 && (
+        {!loading && !error && filteredCabs.length > 0 && (
           <div className="row">
-            {visibleCabs.map((cab, index) => (
+            {filteredCabs.map((cab, index) => (
               <div className="col-md-6 col-lg-3 mb-4" key={cab.registrationId}>
                 <div className="card h-100 d-flex flex-column">
                   <div className="position-relative">
@@ -232,8 +277,8 @@ const ShowRegisteredCabs = () => {
                           (cab.status === "Active"
                             ? "bg-success"
                             : cab.status === "Inactive"
-                              ? "bg-secondary"
-                              : "bg-warning text-dark")
+                            ? "bg-secondary"
+                            : "bg-warning text-dark")
                         }
                       >
                         {cab.status}
@@ -285,8 +330,8 @@ const ShowRegisteredCabs = () => {
           </div>
         )}
 
-        {!loading && !error && visibleCabs.length === 0 && (
-          <p>No cabs match your search.</p>
+        {!loading && !error && filteredCabs.length === 0 && (
+          <p>No cabs match your search or filter.</p>
         )}
       </div>
       {/* Delete Confirmation Modal */}

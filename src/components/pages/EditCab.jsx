@@ -8,9 +8,7 @@ const EditCab = () => {
   const { state } = useLocation();
   const cabData = state?.cab;
   const [suggestions, setSuggestions] = useState([]);
-  const [newImage] = useState(null);
-  const [setMessage] = useState("");
-  const [setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const [modalMessage, setModalMessage] = useState("");
@@ -121,13 +119,13 @@ const EditCab = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setImageUploading(false); // Ensure uploading state is reset
-    setMessage("");
+    setImageUploading(true);
+    setModalMessage(""); // clear previous message
 
     // Show image preview
     const reader = new FileReader();
     reader.onload = () => {
-      setImagePreview(reader.result); // Set the image preview
+      setImagePreview(reader.result);
     };
     reader.readAsDataURL(file);
 
@@ -139,13 +137,11 @@ const EditCab = () => {
       const base64Image = await new Promise((resolve, reject) => {
         const readerForUpload = new FileReader();
         readerForUpload.onloadend = () => {
-          resolve(readerForUpload.result.split(",")[1]); // Get Base64 string without the prefix
+          resolve(readerForUpload.result.split(",")[1]);
         };
         readerForUpload.onerror = reject;
         readerForUpload.readAsDataURL(compressedImage);
       });
-
-      console.log("Compressed Base64 Image:", base64Image); // Log the Base64 string for debugging
 
       // Call API to upload the image
       const response = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
@@ -154,7 +150,7 @@ const EditCab = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: "4", // Replace with the actual user ID
+          userId: "4", // Replace with actual user ID if needed
           base64Image: base64Image,
         }),
       });
@@ -167,20 +163,19 @@ const EditCab = () => {
 
       if (data.responseCode === 200) {
         const imageUrl = data.responseData;
-        console.log("Image URL:", imageUrl);
-
         setFormData((prev) => ({
           ...prev,
           cab: { ...prev.cab, cabImageUrl: imageUrl },
         }));
-
-        setMessage("Image uploaded successfully!");
+        setModalMessage("Image uploaded successfully!");
+        setIsModalVisible(true);
       } else {
-        setMessage(`Failed to upload image: ${data.responseMessage || "Unknown error"}`);
+        setModalMessage(`Failed to upload image: ${data.responseMessage || "Unknown error"}`);
+        setIsModalVisible(true);
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
-      setMessage("An error occurred while uploading the image.");
+      setModalMessage("An error occurred while uploading the image.");
+      setIsModalVisible(true);
     } finally {
       setImageUploading(false);
     }
@@ -634,7 +629,7 @@ const EditCab = () => {
                   </label>
                   <div className="mb-3">
                     <img
-                      src={newImage || formData.cab.cabImageUrl}
+                      src={imagePreview || formData.cab.cabImageUrl}
                       alt="Cab"
                       className="img-thumbnail"
                       style={{ maxWidth: "200px", maxHeight: "200px" }}

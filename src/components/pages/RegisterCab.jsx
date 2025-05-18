@@ -140,8 +140,6 @@ const RegisterCab = () => {
         readerForUpload.readAsDataURL(compressedImage);
       });
 
-      console.log("Compressed Base64 Image:", base64Image); // Log the Base64 string for debugging
-
       // Call API to upload the image
       const response = await fetch(API_ENDPOINTS.UPLOAD_BASE64_IMAGE, {
         method: "POST",
@@ -149,7 +147,7 @@ const RegisterCab = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: localStorage.getItem("userId"), // Replace with the actual user ID
+          userId: localStorage.getItem("userId"),
           base64Image: base64Image,
         }),
       });
@@ -161,8 +159,8 @@ const RegisterCab = () => {
       const data = await response.json();
 
       if (data.responseCode === 200) {
-        const imageUrl = data.responseData[0].imageUrl; // Extract imageUrl from responseData
-        console.log("Image URL:", imageUrl); // Log the image URL for debugging
+        const imageUrl = data.responseData;
+        console.log("Image URL:", imageUrl);
 
         // Update the cabImageUrl field in formData
         setFormData((prev) => ({

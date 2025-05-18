@@ -61,6 +61,8 @@ const DashboardSkeleton = () => (
 const Index = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recentBookings, setRecentBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
 
   useEffect(() => {
     fetch(API_ENDPOINTS.DASHBOARD_DATA, {
@@ -73,6 +75,29 @@ const Index = () => {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setBookingsLoading(true);
+    fetch(API_ENDPOINTS.GET_ALL_BOOKINGS, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const bookings = Array.isArray(data.responseData) ? data.responseData : [];
+        // Filter out bookings without a valid pickupDateTime
+        const validBookings = bookings.filter(
+          b => b.pickupDateTime && !isNaN(new Date(b.pickupDateTime).getTime())
+        );
+        // Sort by pickupDateTime descending
+        validBookings.sort(
+          (a, b) => new Date(b.pickupDateTime).getTime() - new Date(a.pickupDateTime).getTime()
+        );
+        setRecentBookings(validBookings.slice(0, 5));
+        setBookingsLoading(false);
+      })
+      .catch(() => setBookingsLoading(false));
   }, []);
 
   // Fallback values if API is not loaded yet
@@ -185,12 +210,6 @@ const Index = () => {
     { id: 3, user: "Mike Johnson", message: "Driver was very helpful!" },
   ];
 
-  const recentBookings = [
-    { id: 1, user: "John Doe", cab: "Toyota Prius", date: "2023-05-01", status: "Completed" },
-    { id: 2, user: "Jane Smith", cab: "Honda Civic", date: "2023-05-02", status: "Pending" },
-    { id: 3, user: "Mike Johnson", cab: "Ford Focus", date: "2023-05-03", status: "Cancelled" },
-  ];
-
   return (
     <Layout>
       <div className="container mt-4">
@@ -296,26 +315,90 @@ const Index = () => {
                     <h5 className="mb-0">Recent Bookings</h5>
                   </div>
                   <div className="card-body">
-                    <table className="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>User</th>
-                          <th>Cab</th>
-                          <th>Date</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentBookings.map((booking) => (
-                          <tr key={booking.id}>
-                            <td>{booking.user}</td>
-                            <td>{booking.cab}</td>
-                            <td>{booking.date}</td>
-                            <td>{booking.status}</td>
+                    {bookingsLoading ? (
+                      <Skeleton height={120} borderRadius={8} />
+                    ) : (
+                      <table className="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Pickup Location</th>
+                            <th>Drop Location</th>
+                            <th>Pickup Date</th>
+                            <th>Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {recentBookings.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} className="text-center text-muted">
+                                No bookings found.
+                              </td>
+                            </tr>
+                          ) : (
+                            recentBookings.map((booking) => (
+                              <tr key={booking.bookingId}>
+                                <td>{booking.bookingId}</td>
+                                <td>
+                                  <span
+                                    title={booking.pickupLocation}
+                                    style={{
+                                      display: "inline-block",
+                                      maxWidth: 120,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      verticalAlign: "middle",
+                                    }}
+                                  >
+                                    {booking.pickupLocation}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span
+                                    title={booking.dropLocation}
+                                    style={{
+                                      display: "inline-block",
+                                      maxWidth: 120,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      verticalAlign: "middle",
+                                    }}
+                                  >
+                                    {booking.dropLocation}
+                                  </span>
+                                </td>
+                                <td>
+                                  {booking.pickupDateTime
+                                    ? new Date(booking.pickupDateTime).toLocaleString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                    : "-"}
+                                </td>
+                                <td>
+                                  <span
+                                    className={`badge fw-semibold ${booking.bookingStatus === "Completed"
+                                      ? "bg-success"
+                                      : booking.bookingStatus === "Pending"
+                                        ? "bg-warning text-dark"
+                                        : "bg-danger"
+                                      }`}
+                                    style={{ fontSize: 13 }}
+                                  >
+                                    {booking.bookingStatus}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>
